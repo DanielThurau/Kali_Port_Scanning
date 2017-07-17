@@ -539,33 +539,20 @@ function send_email() {
 
     $date = date("j M Y");
     print $date;
-//     $nmap_status_port_bad = $nmap_data["total_status_port_bad"];
-//     $nmap_status_port_unknown = $nmap_data["total_status_port_unknown"];
-//     $nmap_host_unknown_count = $nmap_data["total_host_unknown_count"];
 
-//     if ( strpos($email_address,"@") > "0" ) {
-//         $email_address .= ",rmcneal@teksecurelabs.com";
-//     } else {
-//         $email_address = "rmcneal@teksecurelabs.com";
-//     }
+    $mail = new PHPMailer;
 
-//     $headers  = 'MIME-Version: 1.0' . "\r\n";
-//     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-//     $headers .= 'MIME-Version: 1.0' . "\r\n";
-// //    $headers .= "Importance: Normal\n";
+    $mail->From = 'Scanner@KaliBox.com';
+    $mail->FromName = 'Scanner';
+    $mail->Subject = 'Result from Scan on: ' . $date;
+	        // $mail->Body = 'THis is the bdy';
+	    //     $mail->AddAddress('dthurau@ucsc.edu');
+	    //
+	    //
+	    //         // $mail->AddAttachment('/home/dthruau/myfile.txt');
+	    //
+    return $mail->Send();
 
-// //    $headers = "From: Bob McNeal <rmcneal@teksecurelabs.com>;\n";
-//     $headers .= "From: TCP Detect <scanning@socops.net>;\n";
-// //    $headers .= "MIME-Version: 1.0\n";
-// //    $headers .= "X-Priority: 2\n";
-// //    $headers .= "X-MSMail-Priority: Normal\n";
-// //        $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"\r\n";
-// //    $headers .= "Content-Type: text/html;   charset=\"us-ascii\"\n";
-// //    $headers .= "Content-Transfer-Encoding: 7bit\n";
-// //    $headers .= "Importance: Normal\n";
-
-//     // # Format: mail ( string $to , string $subject , string $message [, string $additional_headers);
-//     mail ( $email_address, "($nmap_status_port_bad Bad ports; $nmap_status_port_unknown Unclassified ports; $nmap_host_unknown_count Unknown hosts) TCP Host/Port Report - $businessunit - $date", $report, $headers);
 
 }
 ## Send Email - End
