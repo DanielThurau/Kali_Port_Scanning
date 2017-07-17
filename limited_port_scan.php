@@ -115,7 +115,6 @@ if (! file_exists($nmap_dir)) {
 }
 
 $nmapOut = $nmap_dir."/output-$businessunit.csv";
-print($nmapOut);
 if (file_exists($nmapOut)){
     send_log(" Backing up previous NMAP output for $businessunit.");
     $toBeExec = "cp $nmapOut " . $nmap_dir . "/output.backup";
