@@ -204,11 +204,11 @@ foreach ($auth_port_list_array as $key=>$value) {
  * Call External PHP modules to perform sequential or concurrent
  * nmap port scans
  */
-// if($UNIX_LIKE){
-//      nmap_child($command_block);
-// }else{
-//      nmap_sequential($command_block);
-// }
+if($UNIX_LIKE){
+     nmap_child($command_block);
+}else{
+     nmap_sequential($command_block);
+}
 
 
 parse_nmap_output($command_block);
@@ -450,18 +450,18 @@ function check_status($value) {
         # nmap_outfile exists (nmap running or finished)
         // Get head of nmap file
         $head = system("head -n 1 $nmap_output_file");
-        $head_check = substr($head, 0, 13);
+        $head_check = substr($head, 0, 6);
         // Get end of nmap file
         $end = system("tail -n 1 $nmap_output_file");
-        $end_check = substr($end, 0, 10);
+        $end_check = substr($end, 0, 11);
 
         // Header check
-        if ( $head_check != 'Starting Nmap' ) {
+        if ( $head_check != '# Nmap' ) {
             send_log("Incorrect Nmap format: Exiting...");
             exit(1);
         } else {
             // Footer Check
-            if ( ($end_check == 'Nmap done:') ) {
+            if ( ($end_check == '# Nmap done') ) {
                 return("complete");
             } else {
                 return("running");
