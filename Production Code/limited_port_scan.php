@@ -446,7 +446,7 @@ function check_status($value) {
         $head_check = substr($head, 0, 6);
         // Get end of nmap file
         $end = system("tail -n 1 $nmap_output_file");
-        $end_check = substr($end, 0, 10);
+        $end_check = substr($end, 0, 11);
 
         // Header check
         if ( $head_check != '# Nmap' ) {
@@ -454,7 +454,7 @@ function check_status($value) {
             exit(1);
         } else {
             // Footer Check
-            if ( ($end_check == 'Nmap done:') ) {
+            if ( ($end_check == '# Nmap done') ) {
                 return("complete");
             } else {
                 return("running");
