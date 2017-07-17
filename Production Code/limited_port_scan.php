@@ -197,11 +197,11 @@ foreach ($auth_port_list_array as $key=>$value) {
  * Call External PHP modules to perform sequential or concurrent
  * nmap port scans
  */
-// if($UNIX_LIKE){
-//      nmap_child($command_block);
-// }else{
-//      nmap_sequential($command_block);
-// }
+if($UNIX_LIKE){
+     nmap_child($command_block);
+}else{
+     nmap_sequential($command_block);
+}
 
 
 parse_nmap_output($command_block);
