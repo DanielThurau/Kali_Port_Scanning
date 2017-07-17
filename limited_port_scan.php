@@ -43,6 +43,8 @@
 include("./nmap_child.php");
 // Sequential moudle for running nmaps on macOS and Windows
 include("./nmap_sequential.php");
+// Mailer module
+require '/home/dthur/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
 
 // Debug statement, triggers all print statements
 // very rudementary debug only on devel branch
@@ -537,8 +539,7 @@ function send_email() {
     global $nmap_data;
 
 
-    $date = date("j M Y");
-    print $date;
+    $date = date('l jS \of F Y h:i:s A');
 
     $mail = new PHPMailer;
 
