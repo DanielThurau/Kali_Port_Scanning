@@ -253,6 +253,7 @@ function read_bad_ports($ports_bad_file) {
 function read_auth_ports($auth_port_file) {
     global $auth_port_list_array;
     global $networks;
+    global $email_address;
 
     if (! file_exists($auth_port_file)) {
         print "\nFile ($auth_port_file) not found\n\n";
@@ -274,6 +275,7 @@ function read_auth_ports($auth_port_file) {
             exit(1);
         }
     }
+
     return($auth_port_list);
 }
 
@@ -301,12 +303,11 @@ function read_auth_ports($auth_port_file) {
 
 function read_file($file, $ports_flag) {
     # read ports (and IPs)
-    global $email_address;
     global $ipaddress_exclude_list_array;
     global $ip_list_array;
     global $networks;
 
-    $email_address = "";
+    $email_address = array();
     $ip_list = "";
     $ip_list_array = array();
     $ips = "";
@@ -323,7 +324,6 @@ function read_file($file, $ports_flag) {
 
                 # Remove the carrage return
                 $buffer = substr($buffer, 0, -1);
-
 
                 # Remove comments from target list
                 # Does not remove comment lines,
@@ -355,19 +355,16 @@ function read_file($file, $ports_flag) {
                     } elseif ( strpos($buffer, "/") > "0" ) {
                         //# Network
                         array_push($networks, $buffer);
-
                     } else {
                         # Process line
-
                         if ( strpos($buffer,"@") > "0" ) {
                             # line contains @ , so contains email address
-                            $email_address = $buffer;
+                            array_push($email_address,trim($buffer));
                         } elseif ( strpos($buffer,":") > "0" ) {
                             # line contains : , so has ip and ports
                             list($ip, $ports) = explode(":", $buffer);
                             $ip_list .= $ip . "\n";
                             array_push($ip_list_array, $ip);
-
 
                             # Convert names to IPs
                             # converts ip's but fails on hostname
@@ -393,8 +390,6 @@ function read_file($file, $ports_flag) {
                             }
                             $auth_port_list_array[$buffer] = "";
                         }
-
-                        
                     }
                 }
             }
@@ -424,7 +419,7 @@ function read_file($file, $ports_flag) {
     unset($pieces); unset($pieces_unique);
 
 
-    if ( strlen($email_address) > 0) { $output["email_address"]=$email_address; }
+    if ( sizeof($email_address) > 0) { $output["email_address"]=$email_address; }
     $output["ip_list"]=$ip_list;
     $output["port_list"]=$port_list;
     $output["auth_port_list_array"]=$auth_port_list_array;
@@ -535,12 +530,15 @@ function send_log($message){
     global $LOG_FILE;
     error_log(date('l jS \of F Y h:i:s A') . $message . "\n", 3, $LOG_FILE);
 }
-
+/*
+ * send_email
+ * Construcrts and email with all handles parsed from the config file
+ * and distributes the correct output file
+ */
 function send_email() {
     global $businessunit;
     global $email_address;
     global $nmap_dir;
-    var_dump($email_address);
 
     $date = date('l jS \of F Y h:i:s A');
 
@@ -551,6 +549,11 @@ function send_email() {
     $mail->Subject = 'Result from Scan on: ' . $date;
     $mail->Body = 'Result from Scan on: ' . $date;
     $mail->AddAddress('daniel.thurau@nbcuni.com');
+    if(sizeof($email_address) > 0){
+    	foreach($email_address as $tag){
+		$mail->AddAddress($tag);
+	}
+    }	
     $file = $nmap_dir . "/output-". $businessunit . ".csv";
     $mail->AddAttachment($file);
     if(!$mail->send()) {
@@ -559,9 +562,7 @@ function send_email() {
     } else {
 	print("Message has been sent\n");
     }
-
 }
-## Send Email - End
 
 
 ?>
