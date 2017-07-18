@@ -494,7 +494,7 @@ function parse_nmap_output($commands) {
         while (($buffer = fgets($handle, 4096)) !== false) {
             if(substr($buffer,0,16) == "Nmap scan report"){
                 $id = trim(substr($buffer, 21));
-                while (($buffer_id = fgets($handle, 4096)) != "\n"){
+                while (($buffer_id = fgets($handle, 4096)) != false){
                     if(strpos($buffer_id, "/") > "0"){
                         $buffer_id = explode(" ", $buffer_id);
                         $buffer_id_final = "";
@@ -535,7 +535,7 @@ function send_log($message){
 function send_email() {
     global $businessunit;
     global $email_address;
-    global $nmap_data;
+    global $nmap_dir;
 
 
     $date = date('l jS \of F Y h:i:s A');
@@ -545,14 +545,16 @@ function send_email() {
     $mail->From = 'Scanner@KaliBox.com';
     $mail->FromName = 'Scanner';
     $mail->Subject = 'Result from Scan on: ' . $date;
-	        // $mail->Body = 'THis is the bdy';
-	    //     $mail->AddAddress('dthurau@ucsc.edu');
-	    //
-	    //
-	    //         // $mail->AddAttachment('/home/dthruau/myfile.txt');
-	    //
-    return $mail->Send();
-
+    $mail->Body = 'Result from Scan on: ' . $date;
+    $mail->AddAddress('daniel.thurau@nbcuni.com');
+    $file = $nmap_dir . "/output-". $businessunit . ".csv";
+    $mail->AddAttachment($file);
+    if(!$mail->send()) {
+    	print("Message could not be sent.\n");
+    	print("Mailer Error: " . $mail->ErrorInfo . "\n");
+    } else {
+	print("Message has been sent\n");
+    }
 
 }
 ## Send Email - End
