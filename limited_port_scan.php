@@ -27,7 +27,8 @@
  *   |______________|______________________|________________|__________________________|
  *   |      1.1     |   Daniel Thurau      |     7-11-17    | Daniel.thurau@nbcuni.com |
  *   |______________|______________________|________________|__________________________|
- *
+ *   |      1.2     |   Daniel Thurau      |     7-18-17    | Daniel.thurau@nbcuni.com |
+ *   |______________|______________________|________________|__________________________|
  *
  *  Usage:
  *      A makefile exists in the devel version and any developer should follow that guideline
@@ -43,12 +44,14 @@
 include("./nmap_child.php");
 // Sequential moudle for running nmaps on macOS and Windows
 include("./nmap_sequential.php");
+// Mailer module
+require '/home/dthur/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
 
 // Debug statement, triggers all print statements
 // very rudementary debug only on devel branch
 $LOG_FILE = ".log";
 $VERISON = "1.2";
-$UNIX_LIKE = false;
+$UNIX_LIKE = true;
 date_default_timezone_set("America/Los_Angeles");
 
 
@@ -107,10 +110,16 @@ if (! is_readable($ports_auth_file)) {
 $nmap_dir = "nmap-$businessunit";
 if (! file_exists($nmap_dir)) {
     echo "nmap directory ($nmap_dir) does NOT exist\n";
-    echo "creating directory...\n";
+    echo ".creating directory...\n";
     system("mkdir $nmap_dir");
-    echo "finished\n";
     send_log(" Nmap directory ($nmap_dir) does NOT exist, creating directory....");
+}
+
+$nmapOut = $nmap_dir."/output-$businessunit.csv";
+if (file_exists($nmapOut)){
+    send_log(" Backing up previous NMAP output for $businessunit.");
+    $toBeExec = "cp $nmapOut " . $nmap_dir . "/output.backup";
+    system($toBeExec);
 }
 
 
@@ -203,9 +212,11 @@ if($UNIX_LIKE){
      nmap_sequential($command_block);
 }
 
-
+// parse nmap-results into one master csv
 parse_nmap_output($command_block);
 
+// Send the email
+send_email();
 /*
  * Read Bad Ports returns a list of ports from config/ports_bad
  * See function read_file to see data definition of ports_bad file
@@ -450,7 +461,7 @@ function check_status($value) {
 
         // Header check
         if ( $head_check != '# Nmap' ) {
-            send_log(" Incorrect Nmap format: Exiting...");
+            send_log("Incorrect Nmap format: Exiting...");
             exit(1);
         } else {
             // Footer Check
@@ -486,7 +497,7 @@ function parse_nmap_output($commands) {
         while (($buffer = fgets($handle, 4096)) !== false) {
             if(substr($buffer,0,16) == "Nmap scan report"){
                 $id = trim(substr($buffer, 21));
-                while (($buffer_id = fgets($handle, 4096)) != "\n"){
+                while (($buffer_id = fgets($handle, 4096)) != false){
                     if(strpos($buffer_id, "/") > "0"){
                         $buffer_id = explode(" ", $buffer_id);
                         $buffer_id_final = "";
@@ -516,10 +527,41 @@ function parse_nmap_output($commands) {
 
 }
 
-
+/*
+ * send_log
+ * Takes a message and sends it to the pointed at log_file with date/time
+ */
 function send_log($message){
     global $LOG_FILE;
     error_log(date('l jS \of F Y h:i:s A') . $message . "\n", 3, $LOG_FILE);
 }
+
+function send_email() {
+    global $businessunit;
+    global $email_address;
+    global $nmap_dir;
+    var_dump($email_address);
+
+    $date = date('l jS \of F Y h:i:s A');
+
+    $mail = new PHPMailer;
+
+    $mail->From = 'Scanner@KaliBox.com';
+    $mail->FromName = 'Scanner';
+    $mail->Subject = 'Result from Scan on: ' . $date;
+    $mail->Body = 'Result from Scan on: ' . $date;
+    $mail->AddAddress('daniel.thurau@nbcuni.com');
+    $file = $nmap_dir . "/output-". $businessunit . ".csv";
+    $mail->AddAttachment($file);
+    if(!$mail->send()) {
+    	print("Message could not be sent.\n");
+    	print("Mailer Error: " . $mail->ErrorInfo . "\n");
+    } else {
+	print("Message has been sent\n");
+    }
+
+}
+## Send Email - End
+
 
 ?>
