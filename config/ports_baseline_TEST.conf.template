@@ -1,8 +1,9 @@
 # email addresses that things will be sent to
 john.doe@email.com
 # 
-# default nmap is -sT
-# flags: -sU -sV
+# default : nmap -P0 -sT -p $port_list -oN $nmap_output_file $ipiaddress_exclude_list IP &
+# flags will be added to the nmap command. 
+#
 flags: -sU -sV
 # Networks
 127.0.0.1/32
