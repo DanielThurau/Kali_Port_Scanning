@@ -48,7 +48,7 @@ include("./nmap_child.php");
 // Sequential moudle for running nmaps on macOS and Windows
 include("./nmap_sequential.php");
 // Mailer module
-require '/Users/danielthurau/vendor/phpmailer/phpmailer/PHPMailerAutoload.php'; 
+require '/home/dthur/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
 
 // Debug statement, triggers all print statements
 // very rudementary debug only on devel branch
@@ -220,7 +220,7 @@ if($UNIX_LIKE){
 parse_nmap_output($command_block);
 
 // Send the email
-if(sizeog($email_address){
+if(sizeof($email_address) > 0 ){
 	send_email();
 }	
 /*
