@@ -206,18 +206,20 @@ foreach ($auth_port_list_array as $key=>$value) {
  * Call External PHP modules to perform sequential or concurrent
  * nmap port scans
  */
-/*
+
 if($UNIX_LIKE){
      nmap_child($command_block);
 }else{
      nmap_sequential($command_block);
 }
-*/
+
 // parse nmap-results into one master csv
 parse_nmap_output($command_block);
 
 // Send the email
-send_email();
+if(sizeog($email_address){
+	send_email();
+}	
 /*
  * Read Bad Ports returns a list of ports from config/ports_bad
  * See function read_file to see data definition of ports_bad file
@@ -551,7 +553,6 @@ function send_email() {
     $mail->FromName = 'Scanner';
     $mail->Subject = 'Result from Scan on: ' . $date;
     $mail->Body = 'Result from Scan on: ' . $date;
-    $mail->AddAddress('daniel.thurau@nbcuni.com');
     foreach($email_address as $tag){
 	$mail->AddAddress($tag);
     }
