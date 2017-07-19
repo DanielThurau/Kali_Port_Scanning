@@ -45,7 +45,7 @@ include("./nmap_child.php");
 // Sequential moudle for running nmaps on macOS and Windows
 include("./nmap_sequential.php");
 // Mailer module
-require '/home/dthur/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
+require '/Users/danielthurau/vendor/phpmailer/phpmailer/PHPMailerAutoload.php'; 
 
 // Debug statement, triggers all print statements
 // very rudementary debug only on devel branch
@@ -161,9 +161,9 @@ foreach ($networks as $value) {
     $nmap_output_file = "$nmap_dir/nmap-T-$net.out";
 
     if ( isset($ipaddress_exclude_list) ) {
-        $command_block[$value] = "nmap -P0 -sT -p $port_list -oN $nmap_output_file $ipaddress_exclude_list $value &";
+        $command_block[$value] = "nmap -P0 -sT " . $flags . " -p $port_list -oN $nmap_output_file $ipaddress_exclude_list $value &";
     } else {
-        $command_block[$value] = "nmap -P0 -sT -p $port_list -oN $nmap_output_file $value &";
+        $command_block[$value] = "nmap -P0 -sT " . $flags . " -p $port_list -oN $nmap_output_file $value &";
     }
 }
 
@@ -196,9 +196,9 @@ foreach ($auth_port_list_array as $key=>$value) {
 
 
     if ( isset($ipaddress_exclude_list) ) {
-        $command_block[$key] = "nmap -P0 -sT -p $port_list -oN $nmap_output_file $ipaddress_exclude_list $key &";
+        $command_block[$key] = "nmap -P0 -sT " . $flags . " -p $port_list -oN $nmap_output_file $ipaddress_exclude_list $key &";
     } else {
-        $command_block[$key] = "nmap -P0 -sT -p $port_list -oN $nmap_output_file $key &";
+        $command_block[$key] = "nmap -P0 -sT " . $flags . " -p $port_list -oN $nmap_output_file $key &";
     }
 }
 
@@ -206,12 +206,13 @@ foreach ($auth_port_list_array as $key=>$value) {
  * Call External PHP modules to perform sequential or concurrent
  * nmap port scans
  */
+/*
 if($UNIX_LIKE){
      nmap_child($command_block);
 }else{
      nmap_sequential($command_block);
 }
-
+*/
 // parse nmap-results into one master csv
 parse_nmap_output($command_block);
 
@@ -306,7 +307,7 @@ function read_file($file, $ports_flag) {
     global $ipaddress_exclude_list_array;
     global $ip_list_array;
     global $networks;
-
+    global $flags;
     $email_address = array();
     $ip_list = "";
     $ip_list_array = array();
@@ -334,7 +335,7 @@ function read_file($file, $ports_flag) {
                    $buffer = trim($buffer);
                    unset($xxx);
                 }
-
+		
                 if($ports_flag == True){
                     $ports = $buffer;
                     // Add a comma a the end of the line if not empty string ?
@@ -349,7 +350,9 @@ function read_file($file, $ports_flag) {
                     if ( substr($buffer, 0,1) == "#" || trim($buffer) == "") {
                         # ignore this line
                         // pass;
-                    } elseif ( substr($buffer, 0,1) == "-" ) {
+                    }elseif ( substr($buffer,0,5) == "flags" ){
+			$flags = trim(substr(trim($buffer),6));
+		    }elseif ( substr($buffer, 0,1) == "-" ) {
                         # add to exclude list
                         array_push($ipaddress_exclude_list_array, substr($buffer, 1));
                     } elseif ( strpos($buffer, "/") > "0" ) {

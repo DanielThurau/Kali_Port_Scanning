@@ -2,8 +2,8 @@
 john.doe@email.com
 # 
 # default nmap is -sT
-# 
-
+# flags: -sU -sV
+flags: -sU -sV
 # Networks
 127.0.0.1/32
 127.0.2.2/28
