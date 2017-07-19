@@ -549,11 +549,9 @@ function send_email() {
     $mail->Subject = 'Result from Scan on: ' . $date;
     $mail->Body = 'Result from Scan on: ' . $date;
     $mail->AddAddress('daniel.thurau@nbcuni.com');
-    if(sizeof($email_address) > 0){
-    	foreach($email_address as $tag){
-		$mail->AddAddress($tag);
-	}
-    }	
+    foreach($email_address as $tag){
+	$mail->AddAddress($tag);
+    }
     $file = $nmap_dir . "/output-". $businessunit . ".csv";
     $mail->AddAttachment($file);
     if(!$mail->send()) {
