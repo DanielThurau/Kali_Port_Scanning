@@ -1,3 +1,9 @@
+# email addresses that things will be sent to
+john.doe@email.com
+# 
+# default nmap is -sT
+# 
+
 # Networks
 127.0.0.1/32
 127.0.2.2/28
