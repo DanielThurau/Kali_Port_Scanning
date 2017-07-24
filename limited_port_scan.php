@@ -118,14 +118,6 @@ if (! file_exists($nmap_dir)) {
     send_log(" Nmap directory ($nmap_dir) does NOT exist, creating directory....");
 }
 
-$nmapOut = $nmap_dir."/output-$businessunit.csv";
-if (file_exists($nmapOut)){
-    send_log(" Backing up previous NMAP output for $businessunit.");
-    $toBeExec = "cp $nmapOut " . $nmap_dir . "/output.backup";
-    system($toBeExec);
-}
-
-
 # Read Bad Ports
 $bad_port_list = read_bad_ports($ports_bad_file);
 
@@ -538,6 +530,7 @@ function send_log($message){
     global $LOG_FILE;
     error_log(date('l jS \of F Y h:i:s A') . $message . "\n", 3, $LOG_FILE);
 }
+
 /*
  * send_email
  * Construcrts and email with all handles parsed from the config file
@@ -548,13 +541,17 @@ function send_email() {
     global $email_address;
     global $nmap_dir;
 
+    $actionable_count = get_actionable();
+
     $date = date('l jS \of F Y h:i:s A');
 
     $mail = new PHPMailer;
 
+
+
     $mail->From = 'Scanner@KaliBox.com';
     $mail->FromName = 'Scanner';
-    $mail->Subject = 'Result from Scan on: ' . $date;
+    $mail->Subject = 'Result from Scan on: ' . $date . '. There are: $actionable_count actionable ports';
     $mail->Body = 'Result from Scan on: ' . $date;
     foreach($email_address as $tag){
 	$mail->AddAddress($tag);
@@ -569,5 +566,19 @@ function send_email() {
     }
 }
 
+function get_actionable(){
+    global $nmap_dir;
+    $actionable_count = 0;
+    $file = $nmap_dir . "/output-". $businessunit . ".csv";
+    if(!file_exists($file)){exit(1);}
+    $handle = @fopen($file, "r");
+    while (($buffer = fgets($handle, 4096)) !== false) {
+        $columns = explode(",",$buffer);
+        if($columns[2] == "open" || $columns[2] == "open|filtered" || $columns[2] == "filtered" || $columns[2] == "closed|filtered"){
+            $actionable_count++;
+        }
+    }
+    return $actionable_count;
+}
 
 ?>
