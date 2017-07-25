@@ -67,6 +67,7 @@ if ( count($argv) != "2" ) {
     exit;
 }
 
+$machineCount = 0;
 $networks = array();
 $ipaddress_exclude_list_array = array();
 $businessunit = $argv[1];
@@ -196,6 +197,9 @@ foreach ($auth_port_list_array as $key=>$value) {
         $command_block[$key] = "nmap -P0 -sT " . $flags . " -p $port_list -oN $nmap_output_file $key &";
     }
 }
+
+$machineCount = sizeof($command_block);
+
 
 /*
  * Call External PHP modules to perform sequential or concurrent
@@ -471,6 +475,10 @@ function check_status($value) {
     }
 }
 
+/*
+ * After each namp command has been run, collect
+ * info into one report.
+ */
 function parse_nmap_output($commands) {
     global $nmap_dir;
     global $auth_port_list_array;
@@ -480,6 +488,7 @@ function parse_nmap_output($commands) {
     global $businessunit;
     $master_nmap_out = array();
 
+    // Use commands to get names for the files 
     foreach ($commands as $key => $value) {
         if(strpos($key, "/") > "0"){
             list($net, $sub) = explode("/", $key);
@@ -488,14 +497,19 @@ function parse_nmap_output($commands) {
         }
         $file = "$nmap_dir/nmap-T-$net.out";
         if(!file_exists($file)){exit(1);}
-        $handle = @fopen($file, "r");
-        while (($buffer = fgets($handle, 4096)) !== false) {
+	
+	// Read each file
+	$handle = @fopen($file, "r");
+	while (($buffer = fgets($handle, 4096)) !== false) {
+	    // Start of data
             if(substr($buffer,0,16) == "Nmap scan report"){
                 $id = trim(substr($buffer, 21));
-                while (($buffer_id = fgets($handle, 4096)) != false){
+		// Read all relevant following data
+		while (($buffer_id = fgets($handle, 4096)) != false){
                     if(strpos($buffer_id, "/") > "0"){
                         $buffer_id = explode(" ", $buffer_id);
-                        $buffer_id_final = "";
+			$buffer_id_final = "";
+			// Format 4 columns to be readble
                         foreach($buffer_id as $item){
                               $item = trim($item);
                               $item.= ",";
@@ -504,13 +518,12 @@ function parse_nmap_output($commands) {
                         array_push($master_nmap_out, $id . "," . $buffer_id_final . "\n");
                     }
                 }
-
             }
         }
 
     }
 
-
+    // write out to outputfile. Report style
     $file = "$nmap_dir/output-$businessunit.csv";
     $handle = @fopen($file, "w+");
     if($handle){
@@ -540,19 +553,32 @@ function send_email() {
     global $businessunit;
     global $email_address;
     global $nmap_dir;
+    global $machineCount;
 
-    $actionable_count = get_actionable();
-
-    $date = date('l jS \of F Y h:i:s A');
+    // relevant data from the report to give to email recievers 
+    $actions = get_actionable();
+    $actionable_count = $actions[0];
+    $actionable_items = $actions[1];
+    $date = date("m/d/Y"); 
 
     $mail = new PHPMailer;
 
-
+    if($actionable_count > 0){
+	    $mail->Subject = 'ACTION REQUIRED: Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.';  
+	    $body = "";
+	    for($i = 0; $i < $actionable_count; $i++){
+		$temp = explode(",", $actionable_items[$i]);
+		$tmep_state= $temp[0] . ", " . $temp[1] . ", " . $temp[2] . ", " . $temp[3] . "\n";
+		$body.=$tmep_state;
+	    }
+	    $mail->Body = 'Result from Scan on: ' . $date . "\n\n" . $body;
+	    $mail->Subject = 'Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.';  
+     }else{
+	     $mail->Body = 'Result from Scan on: ' . $date;
+     }
 
     $mail->From = 'Scanner@KaliBox.com';
     $mail->FromName = 'Scanner';
-    $mail->Subject = 'Result from Scan on: ' . $date . '. There are: $actionable_count actionable ports';
-    $mail->Body = 'Result from Scan on: ' . $date;
     foreach($email_address as $tag){
 	$mail->AddAddress($tag);
     }
@@ -568,6 +594,8 @@ function send_email() {
 
 function get_actionable(){
     global $nmap_dir;
+    global $businessunit;
+    $actionable_items = array();
     $actionable_count = 0;
     $file = $nmap_dir . "/output-". $businessunit . ".csv";
     if(!file_exists($file)){exit(1);}
@@ -576,9 +604,10 @@ function get_actionable(){
         $columns = explode(",",$buffer);
         if($columns[2] == "open" || $columns[2] == "open|filtered" || $columns[2] == "filtered" || $columns[2] == "closed|filtered"){
             $actionable_count++;
+	    array_push($actionable_items,$buffer);
         }
     }
-    return $actionable_count;
+    return array($actionable_count, $actionable_items);
 }
 
 ?>
