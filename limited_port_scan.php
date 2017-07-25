@@ -218,7 +218,9 @@ parse_nmap_output($command_block);
 // Send the email
 if(sizeof($email_address) > 0 ){
 	send_email();
-}	
+}
+
+print("Scan Complete!\n");	
 /*
  * Read Bad Ports returns a list of ports from config/ports_bad
  * See function read_file to see data definition of ports_bad file
