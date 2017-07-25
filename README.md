@@ -1,4 +1,4 @@
-# Project Title
+# Kali_Port_Scanning
 
 This script takes in configuration files that provide IP addresses and ports to be scanned. v1.0 uses nmap xml 
 format, and generates web/email accessible reports for immediate notifcation. v1.1 was a fork that will eventually 
@@ -41,16 +41,34 @@ A step by step series of examples that tell you have to get a development env ru
 Say what the step will be
 
 ```
-Give the example
+git clone https://github.com/DanielThurau/Kali_Port_Scanning.git
 ```
 
-And repeat
+Basic running of example config
 
 ```
-until finished
+cp config/ports_bad_template.template config/ports_bad_template
+cp config/ports_baseline_template.conf.template config/ports_baseline_template.conf
+php limited_port_scan.php template
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+This will run several mnap commands on local host IP's. To view live updates of the script running run command
+
+```
+tail -f .log 
+```
+
+The tool will output 
+
+```
+Scan Complete
+``` 
+
+when the report has been generated. To view, use you favorite editor to view.
+
+```
+[editor] nmap-template/output-template.csv
+```
 
 ## Running the tests
 
