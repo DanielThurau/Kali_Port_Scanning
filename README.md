@@ -71,35 +71,67 @@ when the report has been generated. To view, use you favorite editor to view.
 [editor] nmap-template/output-template.csv
 ```
 
-## Built With
+## Configuration
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+Two configuration files are required to have a successful run of limited_port_scan and several configurable variables 
+within the script are availible for an advanced user to tweak.
 
-## Contributing
+config/
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+In the config folder, a ports_bad_{business_unit} file must exist. A ports_bad_template.template file exists in the 
+directory and can be a good starting off point.
+                
+This file contains universal ports that the user wants to be scanned on every IP provided in ports_baseline_{buisness_unit}.conf. These ports must be comma seperated and on a single line. 
+Do not add port numbers to this file if you DO NOT want them scanned on every IP.
 
-## Versioning
+The ports_baseline_{business_unit}.conf file contains the specific IP addresses, ports, and Networks that the user 
+wants to be scanned and reported on. There are some basic ways to include these in the file:
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+                        single ip address                          [1.2.3.4]
+                                A single IP address will have its ports that are specified in the 
+				ports_bad file scanned ONLY.
 
+                        ip address w/ netmask as cidr              [1.2.3.4/28]
+                                The entire newtork specified by the IP and cidr will be scanned using 
+				the ports in the pad_ports file ONLY.
+
+                        ip address w/ port                         [1.2.3.4:22]
+                                A single IP address with a port will have its ports that are specified in the 
+				ports_bad file scanned AS WELL as the specified port.
+
+                        line comments                              [# Hello World]
+                                This line will be ignored.
+
+                        inline comments.                           [1.2.3.4 # This is an IP addr]
+                                Anything after the # will be ignored.
+
+                        formatted excluded ip                      [-1.2.3.4]
+                                This IP will not be scanned.
+Super-User Variables:
+
+        Default log location is the current directory in a hidden file named .log. This can be changed by specifying
+	a path and name in variable $LOG_FILE
+
+        To enable concurrency, default is sequential, find the $UNIX_LIKE variable and change its boolean value to true.
+
+        If timezone is not set by default in your php.ini file, set it in the beggining of the script using
+	date_default_timezone_set("{Timezone}")
+	
+	
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Sporac TheGnome** - *Initial work*
+* **Daniel Thurau** - *v1.1-1.2* - [DanielThurau](https://github.com/DanielThurau)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* Hat tip to Sporac TheGnome who did much of the grunt work on a previous project and selflessly gave code 
+* to NBCU to replace a previous service.
+
 
 
 
