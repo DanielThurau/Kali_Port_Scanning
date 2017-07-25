@@ -42,6 +42,7 @@ Say what the step will be
 
 ```
 git clone https://github.com/DanielThurau/Kali_Port_Scanning.git
+cd Kali_Ports_Scanning
 ```
 
 Basic running of example config
@@ -69,30 +70,6 @@ when the report has been generated. To view, use you favorite editor to view.
 ```
 [editor] nmap-template/output-template.csv
 ```
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
