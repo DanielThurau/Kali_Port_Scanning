@@ -595,7 +595,9 @@ function send_email() {
 function get_actionable(){
     global $nmap_dir;
     global $businessunit;
+    
     $actionable_items = array();
+    
     $actionable_count = 0;
     $file = $nmap_dir . "/output-". $businessunit . ".csv";
     if(!file_exists($file)){exit(1);}
