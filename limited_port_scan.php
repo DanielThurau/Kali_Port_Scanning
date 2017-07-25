@@ -84,7 +84,7 @@ if (! file_exists($config_dir)) {
 }
 
 // Check existence/readability of ports_bad file
-$ports_bad_file = "$config_dir/ports_bad";
+$ports_bad_file = "$config_dir/ports_bad_$businessunit";
 if (! file_exists($ports_bad_file)) {
     echo "ports_bad_file does NOT exist\n";
     send_log(" Scan on $businessunit failed. No ports_bad_file file.");

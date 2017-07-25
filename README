@@ -1,0 +1,106 @@
+/* 
+ * README
+ * Description: This is the manual for v1.2 of limited_port_scan
+ * Author: Daniel Thurau
+ * Contact: Daniel.Thurau@nbcuni.com
+ * Date: 7-25-17
+ */
+
+
+ limited_port_scan.php is a command line php script that takes in two config files and will generate csv reports on the openess or closedness of specfic ports on specified IP addresses.
+
+
+ 1. Requirements
+ 2. Usage
+ 3. Configuration
+ 4. Extensibility
+ 5. Reports
+
+
+
+
+
+--------- Requirements ---------
+
+It is recommended to have PHP 7.x.x or greater, but PHP 5.1 or greater will work.
+
+This script acts as a complex wrapper around nmap and as such nmap is a required program to have on your system. 
+	Nmap is availible on Win systems, but may be more complex to use. This script relies on spawing background processes 
+	and configuring that is much more complex (look for solution in v1.2)
+
+For super users who will be scanning hundereds/thousands of ports and IP addresses may want to enable concurrency. This 
+entails enabling the php pcntl package which is not always enabled. Consult your verison of PHP as well as OS for more 
+info. A useful guide can be found at http://php.net/manual/en/pcntl.setup.php. How to Enable concurrency will be 
+addressed later in this manual.
+
+A feature of this script is sending live updates to specified email handles. PHP uses its default email client/protocol/port specified
+inside of its php.ini file. Be sure to consult your php build, as of php7.1.8 none of the default smtp settings are enabled. It is 
+recommended to also secure your machine to not allow it to be a forwarding node, so be sure to research how to disable this feature 
+on your specific OS.
+
+--------- Usage ---------
+
+php limited_port_scan.php business_unit
+
+Buisness_unit will be the universal name you add to the end of ports_baseline_{business_unit}.conf and will be used to create the 
+nmap output directory named nmap-{business_unit} and the final csv report file named output-{business_unit}.csv, so choose wise
+meaningful names. In your config directory, if there is no file: ports_bad or ports_baseline_{business_unit}.conf the script will
+abort and send logs to your .log file.
+
+--------- Configuration ---------
+
+Two configuration files are required to have a successful run of limited_port_scan and several configurable variables within the 
+script that an advanced user can tweak.
+
+config/
+	
+		In the config folder, a ports_bad file must exist. A ports_bad.template file exists in the directory and can be a good starting off point.
+		This file contains universal ports that the user wants to be scanned on every IP provided in ports_baseline_{buisness_unit}.conf. These ports
+		must be comma seperated and on a single line. Do not add port numbers to this file if you DO NOT want them scanned on every IP.
+
+		The ports_baseline_{business_unit}.conf file contains the specific IP addresses, ports, and Networks that the user wants to be scanned and
+		reported on. There are some basic ways to include these in the file:
+
+			single ip address                          [1.2.3.4]
+				A single IP address will have its ports that are specified in the ports_bad file scanned ONLY.
+
+			ip address w/ netmask as cidr              [1.2.3.4/28]
+				A network will have every IP starting at the IP and covered by the mask will have their ports 
+				that are specified in the ports_bad file scanned ONLY.
+
+			ip address w/ port                         [1.2.3.4:22]
+				A single IP address with a port will have its ports that are specified in the ports_bad file 
+				scanned AS WELL as the specified port.
+
+			line comments                              [# Hello World]
+				This line will be ignored.
+
+			inline comments.                           [1.2.3.4 # This is an IP addr]
+				Anything after the # will be ignored.
+
+			formatted excluded ip                      [-1.2.3.4]
+				This IP will not be scanned.
+
+
+Super-User Variables:
+
+	Default log location is the current directory in a hidden file names .log. This can be changed by specifying a path and name in variable $LOG_FILE
+
+	To enable concurrency, default is sequential, find the $UNIX_LIKE variable and change its boolean value to true.
+
+	If timezone is not set by default in your php.ini file, set it in the beggining of the script using date_default_timezone_set("{Timezone}")
+
+
+
+--------- Extensibility ---------
+
+This is a command line tool, and as such many personal scripts can be used to extend its abilities. It is recommended to have a makefile for developers 
+because there are several cli arguments on the development branch of this tool.
+
+One very useful extension is to configure a cron job on linux systems that on a schedule will re-scan each business unit and create output reports.
+
+--------- Reports ---------
+
+The reports are created in the nmap-{business_unit} directory and will have format of [ IP ADDRESS | PORT | STATUS | TYPE ]
+
+
