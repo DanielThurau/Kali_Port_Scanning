@@ -117,7 +117,13 @@ Super-User Variables:
         If timezone is not set by default in your php.ini file, set it in the beggining of the script using
 	date_default_timezone_set("{Timezone}")
 	
-	
+## Reports
+
+The reports are created in the nmap-{business_unit} directory and will have format of [ IP ADDRESS | PORT | STATUS | TYPE ]
+
+To have the report emailed out after completion, include email handles at the top of the 
+ports_baseline_{business_unit}.conf file.
+
 ## Authors
 
 * **Sporac TheGnome** - *Initial work*
