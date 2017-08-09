@@ -568,11 +568,11 @@ function send_email() {
     if($actionable_count > 0){
 	    $mail->Subject = 'ACTION REQUIRED: Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.';  
 	    $body = "";
-	    for($i = 0; $i < $actionable_count; $i++){
-		$temp = explode(",", $actionable_items[$i]);
-		$tmep_state= $temp[0] . ", " . $temp[1] . ", " . $temp[2] . ", " . $temp[3] . "\n";
-		$body.=$tmep_state;
-	    }
+	    // for($i = 0; $i < $actionable_count; $i++){
+    	// 	$temp = explode(",", $actionable_items[$i]);
+    	// 	$tmep_state= $temp[0] . ", " . $temp[1] . ", " . $temp[2] . ", " . $temp[3] . "\n";
+    	// 	$body.=$tmep_state;
+	    // }
 	    $mail->Body = 'Result from Scan on: ' . $date . "\n\n" . $body;
      }else{
         $mail->Subject = 'Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.'; 
