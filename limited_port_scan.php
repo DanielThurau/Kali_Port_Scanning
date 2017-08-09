@@ -461,8 +461,9 @@ function check_status($value) {
         $end_check = substr($end, 0, 11);
 
         // Header check
-        if ( $head_check != '# Nmap' ) {
-            send_log("Incorrect Nmap format: Exiting...");
+	if ( $head_check != '# Nmap' ) {
+		send_log($nmap_output_file);
+            send_log(" Incorrect Nmap format: Exiting...");
             exit(1);
         } else {
             // Footer Check
@@ -512,16 +513,11 @@ function parse_nmap_output($commands) {
                         $buffer_id = explode(" ", $buffer_id);
 			$buffer_id_final = "";
 			// Format 4 columns to be readble
-                        for ($i = 0; $i < 2; $i++){
-                            $buffer_id[$i] = trim($buffer_id[$i]);
-                            $item.=",";
-                            if($item != ","){$buffer_id_final.=$item;}
+                        foreach($buffer_id as $item){
+                               $item = trim($item);
+                               $item.= ",";
+                               if($item != ","){$buffer_id_final.=$item;}
                         }
-                        // foreach($buffer_id as $item){
-                        //       $item = trim($item);
-                        //       $item.= ",";
-                        //       if($item != ","){$buffer_id_final.=$item;}
-                        // }
                         array_push($master_nmap_out, $id . "," . $buffer_id_final . "\n");
                     }
                 }
@@ -566,22 +562,28 @@ function send_email() {
     $actions = get_actionable();
     $actionable_count = $actions[0];
     $actionable_items = $actions[1];
+    $open = $actions[2];
+    $openFiltered = $actions[3];
+    $filtered = $actions[4];
+    $closedFiltered = $actions[5];
     $date = date("m/d/Y"); 
 
     $mail = new PHPMailer;
 
     if($actionable_count > 0){
 	    $mail->Subject = 'ACTION REQUIRED: Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.';  
-	    $body = "";
-	    // for($i = 0; $i < $actionable_count; $i++){
-    	// 	$temp = explode(",", $actionable_items[$i]);
-    	// 	$tmep_state= $temp[0] . ", " . $temp[1] . ", " . $temp[2] . ", " . $temp[3] . "\n";
-    	// 	$body.=$tmep_state;
-	    // }
-	    $mail->Body = 'Result from Scan on: ' . $date . "\n\n" . $body;
+	    $body = "Open Ports: " . $open . "\n";
+	    $body.= "Open|Filtered Ports: " . $openFiltered . "\n";
+	    $body.= "Filtered Ports: " . $filtered . "\n";
+	    $body.= "Closed|Filtered Ports: " . $closedFiltered . "\n";
+	    $mail->Body = 'Result from Scan on: ' . $date . " for business unit " . $businessunit . "\n\n" . $body;
      }else{
-        $mail->Subject = 'Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.'; 
-	    $mail->Body = 'Result from Scan on: ' . $date;
+        	$mail->Subject = 'Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.'; 
+	    $body = "Open Ports: " . $open . "\n";
+	    $body.= "Open|Filtered Ports: " . $openFiltered . "\n";
+	    $body.= "Filtered Ports: " . $filtered . "\n";
+	    $body.= "Closed|Filtered Ports: " . $closedFiltered . "\n";
+	    $mail->Body = 'Result from Scan on: ' . $date . " for business unit " . $businessunit . "\n\n" . $body;
      }
 
     $mail->From = 'Scanner@KaliBox.com';
@@ -589,7 +591,10 @@ function send_email() {
     foreach($email_address as $tag){
 	$mail->AddAddress($tag);
     }
-    $file = $nmap_dir . "/output-". $businessunit . ".csv";
+    $tozip = "zip " . $nmap_dir . "/output-" . $businessunit . ".csv.zip " . $nmap_dir . "/output-" . $businessunit . ".csv";
+    print($tozip);
+    system($tozip);
+    $file = $nmap_dir . "/output-". $businessunit . ".csv.zip";
     $mail->AddAttachment($file);
     if(!$mail->send()) {
     	print("Message could not be sent.\n");
@@ -605,18 +610,31 @@ function get_actionable(){
     
     $actionable_items = array();
     
-    $actionable_count = 0;
+    $open = $actionable_count = $openFiltered = $filtered = $closedFiltered = 0;
     $file = $nmap_dir . "/output-". $businessunit . ".csv";
     if(!file_exists($file)){exit(1);}
     $handle = @fopen($file, "r");
     while (($buffer = fgets($handle, 4096)) !== false) {
         $columns = explode(",",$buffer);
-        if($columns[2] == "open" || $columns[2] == "open|filtered" || $columns[2] == "filtered" || $columns[2] == "closed|filtered"){
-            $actionable_count++;
-	    array_push($actionable_items,$buffer);
-        }
+        if($columns[2] == "open"){
+		$actionable_count++;
+		$open++;
+	    	array_push($actionable_items,$buffer);
+	}else if($columns[2] == "open|filtered"){
+		$actionable_count++;
+		$openFiltered++;
+	    	array_push($actionable_items,$buffer);
+	}else if($columns[2] == "filtered"){
+		$actionable_count++;
+		$filtered++;
+	    	array_push($actionable_items,$buffer);
+	}else if($columns[2] == "closed|filtered"){
+		$actionable_count++;
+		$closedFiltered++;
+	    	array_push($actionable_items,$buffer);
+	}
     }
-    return array($actionable_count, $actionable_items);
+    return array($actionable_count, $actionable_items, $open, $openFiltered, $filtered, $closedFiltered);
 }
 
 ?>
