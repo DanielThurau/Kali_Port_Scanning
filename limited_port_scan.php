@@ -574,9 +574,9 @@ function send_email() {
 		$body.=$tmep_state;
 	    }
 	    $mail->Body = 'Result from Scan on: ' . $date . "\n\n" . $body;
-	    $mail->Subject = 'Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.';  
      }else{
-	     $mail->Body = 'Result from Scan on: ' . $date;
+        $mail->Subject = 'Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.'; 
+	    $mail->Body = 'Result from Scan on: ' . $date;
      }
 
     $mail->From = 'Scanner@KaliBox.com';
