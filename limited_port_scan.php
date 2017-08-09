@@ -512,11 +512,16 @@ function parse_nmap_output($commands) {
                         $buffer_id = explode(" ", $buffer_id);
 			$buffer_id_final = "";
 			// Format 4 columns to be readble
-                        foreach($buffer_id as $item){
-                              $item = trim($item);
-                              $item.= ",";
-                              if($item != ","){$buffer_id_final.=$item;}
+                        for ($i = 0; $i < 2; $i++){
+                            $buffer_id[$i] = trim($buffer_id[$i]);
+                            $item.=",";
+                            if($item != ","){$buffer_id_final.=$item;}
                         }
+                        // foreach($buffer_id as $item){
+                        //       $item = trim($item);
+                        //       $item.= ",";
+                        //       if($item != ","){$buffer_id_final.=$item;}
+                        // }
                         array_push($master_nmap_out, $id . "," . $buffer_id_final . "\n");
                     }
                 }
