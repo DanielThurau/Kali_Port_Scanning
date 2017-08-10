@@ -44,15 +44,15 @@
 
 // Forking module for running nmaps
 // Only availible on unix-like systems because of MacOS and SIP
-include("./nmap_child.php");
+include(dirname(__FILE__) . "/nmap_child.php");
 // Sequential moudle for running nmaps on macOS and Windows
-include("./nmap_sequential.php");
+include(dirname(__FILE__) . "/nmap_sequential.php");
 // Mailer module
 require '/home/dthur/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
 
 // Debug statement, triggers all print statements
 // very rudementary debug only on devel branch
-$LOG_FILE = ".log";
+$LOG_FILE = dirname(__FILE__) . ".log";
 $VERISON = "1.2";
 $UNIX_LIKE = true;
 date_default_timezone_set("America/Los_Angeles");
@@ -76,7 +76,8 @@ send_log(" Scan started on business unit: " . $businessunit);
 
 ### Directories / Files ###
 // Check existence of config dir
-$config_dir = "config";
+$config_dir = dirname(__FILE__) . "/config";
+print($config_dir);
 if (! file_exists($config_dir)) {
     echo "Configuration directory does NOT exist\n";
     send_log(" Scan on $businessunit failed. No config directory.");
@@ -111,7 +112,7 @@ if (! is_readable($ports_auth_file)) {
 }
 
 // checks if nmap-dir exists (if not create)
-$nmap_dir = "nmap-$businessunit";
+$nmap_dir = dirname(__FILE__) . "/nmap-$businessunit";
 if (! file_exists($nmap_dir)) {
     echo "nmap directory ($nmap_dir) does NOT exist\n";
     echo ".creating directory...\n";
@@ -205,7 +206,6 @@ $machineCount = sizeof($command_block);
  * Call External PHP modules to perform sequential or concurrent
  * nmap port scans
  */
-
 if($UNIX_LIKE){
      nmap_child($command_block);
 }else{
@@ -592,7 +592,6 @@ function send_email() {
 	$mail->AddAddress($tag);
     }
     $tozip = "zip " . $nmap_dir . "/output-" . $businessunit . ".csv.zip " . $nmap_dir . "/output-" . $businessunit . ".csv";
-    print($tozip);
     system($tozip);
     $file = $nmap_dir . "/output-". $businessunit . ".csv.zip";
     $mail->AddAttachment($file);
