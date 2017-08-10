@@ -201,6 +201,7 @@ foreach ($auth_port_list_array as $key=>$value) {
 
 $machineCount = sizeof($command_block);
 
+var_dump($command_block);
 
 /*
  * Call External PHP modules to perform sequential or concurrent
@@ -354,12 +355,14 @@ function read_file($file, $ports_flag) {
                         # ignore this line
                         // pass;
                     }elseif ( substr($buffer,0,5) == "flags" ){
-			$flags = trim(substr(trim($buffer),6));
-		    }elseif ( substr($buffer, 0,1) == "-" ) {
+    			         $flags = trim(substr(trim($buffer),6));
+    		        }elseif ( substr($buffer, 0,1) == "-" ) {
                         # add to exclude list
                         array_push($ipaddress_exclude_list_array, substr($buffer, 1));
                     } elseif ( strpos($buffer, "/") > "0" ) {
                         //# Network
+                        array_push($networks, $buffer);
+                    }elseif ( strpos($buffer, "-") > "0" ){
                         array_push($networks, $buffer);
                     } else {
                         # Process line
