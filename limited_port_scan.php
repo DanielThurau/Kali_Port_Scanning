@@ -52,7 +52,7 @@ require '/home/dthur/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
 
 // Debug statement, triggers all print statements
 // very rudementary debug only on devel branch
-$LOG_FILE = dirname(__FILE__) . ".log";
+$LOG_FILE = dirname(__FILE__) . "/.log";
 $VERISON = "1.2";
 $UNIX_LIKE = true;
 date_default_timezone_set("America/Los_Angeles");
@@ -77,7 +77,6 @@ send_log(" Scan started on business unit: " . $businessunit);
 ### Directories / Files ###
 // Check existence of config dir
 $config_dir = dirname(__FILE__) . "/config";
-print($config_dir);
 if (! file_exists($config_dir)) {
     echo "Configuration directory does NOT exist\n";
     send_log(" Scan on $businessunit failed. No config directory.");
@@ -146,8 +145,12 @@ foreach ($networks as $value) {
     $port_list = implode(",",$tmp_port_list);
     # double check empty ports
     if ( substr($port_list, 0, 1) == "," ) { $port_list = substr($port_list, 1); }
-
-    list($net, $sub) = explode("/", $value);
+    $net = $sub = $end = "";
+    if(strpos($value, "/") > "0"){
+    	list($net, $sub) = explode("/", $value);
+    }else if (strpos($value, "-") > "0"){
+	list($net, $end) = explode("-", $value);
+    }
 
     # Exclude IP List
     if (count($ipaddress_exclude_list_array) > 0 ) {
@@ -200,8 +203,6 @@ foreach ($auth_port_list_array as $key=>$value) {
 }
 
 $machineCount = sizeof($command_block);
-
-var_dump($command_block);
 
 /*
  * Call External PHP modules to perform sequential or concurrent
@@ -493,16 +494,17 @@ function parse_nmap_output($commands) {
     global $master_nmap_out;
     global $businessunit;
     $master_nmap_out = array();
-
     // Use commands to get names for the files 
     foreach ($commands as $key => $value) {
         if(strpos($key, "/") > "0"){
             list($net, $sub) = explode("/", $key);
+	}else if(strpos($key,"-") > "0"){
+	    list($net, $sub) = explode("-", $key);
         }else{
             $net = $key;
         }
         $file = "$nmap_dir/nmap-T-$net.out";
-        if(!file_exists($file)){exit(1);}
+	if(!file_exists($file)){exit(1);}
 	
 	// Read each file
 	$handle = @fopen($file, "r");
