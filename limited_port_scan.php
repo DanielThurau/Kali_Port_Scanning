@@ -513,7 +513,7 @@ function parse_nmap_output($commands) {
             if(substr($buffer,0,16) == "Nmap scan report"){
                 $id = trim(substr($buffer, 21));
 		// Read all relevant following data
-		while (($buffer_id = fgets($handle, 4096)) != false){
+		while (($buffer_id = fgets($handle, 4096)) != "\n"){
                     if(strpos($buffer_id, "/") > "0"){
                         $buffer_id = explode(" ", $buffer_id);
 			$buffer_id_final = "";
