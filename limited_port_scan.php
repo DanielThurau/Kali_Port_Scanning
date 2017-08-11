@@ -509,56 +509,42 @@ function parse_nmap_output($commands) {
         $file = "$nmap_dir/nmap-T-$net.out";
 	if(!file_exists($file)){exit(1);}
 	
-	// Read each file
-	$handle = @fopen($file, "r");
-	$READING = false;
-	$id = "";
-	$falseStatement = "";
-	while (($buffer = fgets($handle, 4096)) !== false) {
-	    // Start of data
-            if(substr($buffer,0,16) == "Nmap scan report"){
-                $id = trim(substr($buffer, 21));
-		$READING = true;
-		// Read all relevant following data
-	    }
-	    if($READING){
-		    print("READING: $id\n");
-			if($buffer == "\n"){
-				$falseStatement .= $buffer;
-			}
-			if($falseStatement == "\n\n"){
-				$READING = false;
-				$falseStatement = "";
-				$id = "";
-				continue;
-			}else if(is_numeric($buffer[0])){
-				$buffer_id = explode(" ", $buffer);
+    	// Read each file
+    	$handle = @fopen($file, "r");
+    	$READING = false;
+    	$id = "";
+    	$falseStatement = "";
+    	while (($buffer = fgets($handle, 4096)) !== false) {
+    	    // Start of data
+                if(substr($buffer,0,16) == "Nmap scan report"){
+                    $id = trim(substr($buffer, 21));
+    		$READING = true;
+    		// Read all relevant following data
+    	    }
+    	    if($READING){
+    		    print("READING: $id\n");
+    			if($buffer == "\n"){
+    				$falseStatement .= $buffer;
+    			}
+    			if($falseStatement == "\n\n"){
+    				$READING = false;
+    				$falseStatement = "";
+    				$id = "";
+    				continue;
+    			}else if(is_numeric($buffer[0])){
+    				$buffer_id = explode(" ", $buffer);
 
-				$buffer_id_final = "";
-				// Format 4 columns to be readble
-                        	foreach($buffer_id as $item){
-                               		$item = trim($item);
-                               		$item.= ",";
-                               		if($item != ","){$buffer_id_final.=$item;}
-                        	}
-				array_push($master_nmap_out, $id . "," . "$buffer_id_final" . "\n");
-				print("		$buffer_id_final\n");
-			}
-		}
-	/*	while (($buffer_id = fgets($handle, 4096)) != "\n"){
-                    if(strpos($buffer_id, "/") > "0"){
-                        $buffer_id = explode(" ", $buffer_id);
-			$buffer_id_final = "";
-			// Format 4 columns to be readble
-                        foreach($buffer_id as $item){
-                               $item = trim($item);
-                               $item.= ",";
-                               if($item != ","){$buffer_id_final.=$item;}
-                        }
-                        array_push($master_nmap_out, $id . "," . $buffer_id_final . "\n");
-		    }
- 
-		}*/
+    				$buffer_id_final = "";
+    				// Format 4 columns to be readble
+                            	foreach($buffer_id as $item){
+                                   		$item = trim($item);
+                                   		$item.= ",";
+                                   		if($item != ","){$buffer_id_final.=$item;}
+                            	}
+    				array_push($master_nmap_out, $id . "," . "$buffer_id_final" . "\n");
+    				print("		$buffer_id_final\n");
+    			}
+    		}
             
         }
 
