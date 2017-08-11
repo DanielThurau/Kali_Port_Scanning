@@ -209,13 +209,13 @@ $machineCount = sizeof($command_block);
  * nmap port scans
  */
 
-/*
+
 if($UNIX_LIKE){
      nmap_child($command_block);
 }else{
      nmap_sequential($command_block);
 }
- */
+
 
 // parse nmap-results into one master csv
 parse_nmap_output($command_block);
