@@ -208,11 +208,14 @@ $machineCount = sizeof($command_block);
  * Call External PHP modules to perform sequential or concurrent
  * nmap port scans
  */
+
+/*
 if($UNIX_LIKE){
      nmap_child($command_block);
 }else{
      nmap_sequential($command_block);
 }
+ */
 
 // parse nmap-results into one master csv
 parse_nmap_output($command_block);
@@ -508,12 +511,41 @@ function parse_nmap_output($commands) {
 	
 	// Read each file
 	$handle = @fopen($file, "r");
+	$READING = false;
+	$id = "";
+	$falseStatement = "";
 	while (($buffer = fgets($handle, 4096)) !== false) {
 	    // Start of data
             if(substr($buffer,0,16) == "Nmap scan report"){
                 $id = trim(substr($buffer, 21));
+		$READING = true;
 		// Read all relevant following data
-		while (($buffer_id = fgets($handle, 4096)) != "\n"){
+	    }
+	    if($READING){
+		    print("READING: $id\n");
+			if($buffer == "\n"){
+				$falseStatement .= $buffer;
+			}
+			if($falseStatement == "\n\n"){
+				$READING = false;
+				$falseStatement = "";
+				$id = "";
+				continue;
+			}else if(is_numeric($buffer[0])){
+				$buffer_id = explode(" ", $buffer);
+
+				$buffer_id_final = "";
+				// Format 4 columns to be readble
+                        	foreach($buffer_id as $item){
+                               		$item = trim($item);
+                               		$item.= ",";
+                               		if($item != ","){$buffer_id_final.=$item;}
+                        	}
+				array_push($master_nmap_out, $id . "," . "$buffer_id_final" . "\n");
+				print("		$buffer_id_final\n");
+			}
+		}
+	/*	while (($buffer_id = fgets($handle, 4096)) != "\n"){
                     if(strpos($buffer_id, "/") > "0"){
                         $buffer_id = explode(" ", $buffer_id);
 			$buffer_id_final = "";
@@ -524,9 +556,10 @@ function parse_nmap_output($commands) {
                                if($item != ","){$buffer_id_final.=$item;}
                         }
                         array_push($master_nmap_out, $id . "," . $buffer_id_final . "\n");
-                    }
-                }
-            }
+		    }
+ 
+		}*/
+            
         }
 
     }
