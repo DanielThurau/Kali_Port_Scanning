@@ -596,19 +596,14 @@ function send_email() {
 
     if($actionable_count > 0){
 	    $mail->Subject = 'ACTION REQUIRED: Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.';  
-	    $body = "Open Ports: " . $open . "\n";
-	    $body.= "Open|Filtered Ports: " . $openFiltered . "\n";
-	    $body.= "Filtered Ports: " . $filtered . "\n";
-	    $body.= "Closed|Filtered Ports: " . $closedFiltered . "\n";
-	    $mail->Body = 'Result from Scan on: ' . $date . " for business unit " . $businessunit . "\n\n" . $body;
      }else{
         	$mail->Subject = 'Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.'; 
-	    $body = "Open Ports: " . $open . "\n";
-	    $body.= "Open|Filtered Ports: " . $openFiltered . "\n";
-	    $body.= "Filtered Ports: " . $filtered . "\n";
-	    $body.= "Closed|Filtered Ports: " . $closedFiltered . "\n";
-	    $mail->Body = 'Result from Scan on: ' . $date . " for business unit " . $businessunit . "\n\n" . $body;
      }
+     $body = "Open Ports: " . $open . "\n";
+    $body.= "Open|Filtered Ports: " . $openFiltered . "\n";
+    $body.= "Filtered Ports: " . $filtered . "\n";
+    $body.= "Closed|Filtered Ports: " . $closedFiltered . "\n";
+    $mail->Body = 'Result from Scan on: ' . $date . " for business unit " . $businessunit . "\n\n" . $body;
 
     $mail->From = 'Scanner@KaliBox.com';
     $mail->FromName = 'Scanner';
