@@ -128,6 +128,23 @@ $auth_port_list = read_auth_ports($ports_auth_file);
 // Holds all commands that will be run on the cli
 $command_block = array();
 
+$cidrDict = array(
+  "30" => "4",
+  "29" => "8",
+  "28" => "16",
+  "27" => "32",
+  "26" => "64",
+  "25" => "128",
+  "24" => "256",
+  "23" => "512",
+  "22" => "1024",
+  "21" => "2048",
+  "20" => "4096",
+  "19" => "80192",
+);
+
+
+
 /*
  * Iterate through the networks from the config files and
  * create commands to be exec
@@ -135,6 +152,8 @@ $command_block = array();
 foreach ($networks as $value) {
     //determine scan status running
     $status = check_status($value);
+
+    $machineCount = increaseCount($value, $machineCount, $cidrDict);
 
     # Combine and unique ports
     $port_list = trim($auth_port_list) . "," . trim($bad_port_list);
@@ -152,6 +171,8 @@ foreach ($networks as $value) {
 	list($net, $end) = explode("-", $value);
     }
 
+
+
     # Exclude IP List
     if (count($ipaddress_exclude_list_array) > 0 ) {
         $ipaddress_exclude_list = implode(",", $ipaddress_exclude_list_array);
@@ -167,12 +188,12 @@ foreach ($networks as $value) {
     }
 }
 
-
 /*
  * Iterate through the singular networks from the config files
  * and create commands to be exec
  */
 foreach ($auth_port_list_array as $key=>$value) {
+    $machineCount++;	
     # Combine and unique ports
     $port_list = trim($auth_port_list) . "," . trim($bad_port_list);
     $tmp_port_list = explode(",",$port_list);
@@ -201,8 +222,6 @@ foreach ($auth_port_list_array as $key=>$value) {
         $command_block[$key] = "nmap -P0 -sT " . $flags . " -p $port_list -oN $nmap_output_file $key &";
     }
 }
-
-$machineCount = sizeof($command_block);
 
 /*
  * Call External PHP modules to perform sequential or concurrent
@@ -595,7 +614,7 @@ function send_email() {
     $mail = new PHPMailer;
 
     if($actionable_count > 0){
-	    $mail->Subject = 'ACTION REQUIRED: Scan Results from Kali on ' . $date . '. There are ' . $actionable_count . ' actionable events, and ' . $machineCount . ' peripherals scanned.';  
+	    $mail->Subject = 'ACTION REQUIRED: Scan Results from Kali on ' . $date . '. There are ' . $open . ' open ports, and ' . $machineCount . ' peripherals scanned.';  
 	    $body = "Open Ports: " . $open . "\n";
 	    $body.= "Open|Filtered Ports: " . $openFiltered . "\n";
 	    $body.= "Filtered Ports: " . $filtered . "\n";
@@ -659,5 +678,23 @@ function get_actionable(){
     }
     return array($actionable_count, $actionable_items, $open, $openFiltered, $filtered, $closedFiltered);
 }
+
+function increaseCount($ip, $count,$cidrDict){
+  $list = explode(".", $ip);
+  $range = $list[sizeof($list)-1];
+  if(strpos($range,"-") > "0"){
+    $range = explode("-", $range);
+    $count += $range[1] - $range[0] + 1;
+  }else if(strpos($range,"/") > "0"){
+    $range = explode("/",$range);
+    $count += $cidrDict[$range[1]];
+  } 
+  return $count;
+}
+
+
+
+
+
 
 ?>
