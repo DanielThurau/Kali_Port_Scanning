@@ -48,11 +48,12 @@ if(len(sys.argv) != 2):
   print("\nUsage: python3 limited_port_scan.py \{business_unit\}")
   exit(0)
 
+
 business_unit = BusinessUnit(sys.argv[1], FULL_PATH, FULL_PATH + "." + sys.argv[1] + ".log")
 
-business_unit.send_log("Scan Started")
+# At this point the object is substantiated and all dependencies have been resolved. 
 
-
+business_unit.read_file_ports()
 
 
 
