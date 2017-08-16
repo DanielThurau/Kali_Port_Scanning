@@ -54,6 +54,12 @@ business_unit = BusinessUnit(sys.argv[1], FULL_PATH, FULL_PATH + "." + sys.argv[
 # At this point the object is substantiated and all dependencies have been resolved. 
 
 business_unit.read_file_ports()
+business_unit.read_file_base()
+business_unit.scan()
+business_unit.collect()
+
+
+
 
 
 
