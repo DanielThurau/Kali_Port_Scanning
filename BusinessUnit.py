@@ -1,28 +1,26 @@
 from ScanObject import *
+from log import *
 
 import os
-import logging
 import datetime
 import time
 import subprocess
 
 class BusinessUnit:
-  def __init__(self, p_name, p_path, p_log):
+  def __init__(self, p_name, p_path):
     # Set up logging
-    logging.basicConfig(filename=p_log, level=logging.INFO)
 
     # Provided input
-    self.send_log("Scan started on " + p_name)
+    send_log("Scan started on " + p_name)
     self.business_unit = p_name
     self.path = p_path
-    self.log = p_log
 
     # Object populates this
     self.machineCount = 0;
     self.emails = []
     self.exclude_string = ""
     self.BU_scan_objs = []
-
+    self.stats = {"open":0, "open|filtered":0, "filtered":0, "closed|filtered":0, "closed":0}
 
 
     # immediatley populated by checkDeps()
@@ -42,17 +40,14 @@ class BusinessUnit:
 
     self.nmap_dir = self.path + "nmap-" + self.business_unit + "/"
     if not os.path.exists(self.nmap_dir):
-      self.send_log(self.nmap_dir + " does not exist... creating now")
+      send_log(self.nmap_dir + " does not exist... creating now")
       os.system("mkdir " + self.nmap_dir)
 
   def checkExist(self, file):
     if not os.path.exists(file):
       print(file + " does not exist. Exiting...")
-      self.send_log(file+ " does not exist.")
+      send_log(file+ " does not exist.")
       exit(0)
-
-  def send_log(self, message):
-    logging.info(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + " " + message)
 
   def read_file_ports(self):
     try:
@@ -74,7 +69,7 @@ class BusinessUnit:
           self.ports = self.ports + ','
 
     except IOError:
-      self.send_log("Unable to open " + self.ports_file)
+      send_log("Unable to open " + self.ports_file)
       exit(1)
 
   def read_file_base(self):
@@ -111,7 +106,7 @@ class BusinessUnit:
               self.BU_scan_objs.append(BU_SO)
               self.machineCount = self.machineCount + BU_SO.getMachineCount()
     except IOError:
-      self.send_log("Unable to open " + self.ip_file)
+      send_log("Unable to open " + self.ip_file)
       exit(1)
 
 
@@ -123,9 +118,9 @@ class BusinessUnit:
       if pid != 0:
         pids.append(pid)
       else:
-        self.send_log(obj.command)
+        send_log(obj.command)
         os.system(obj.command)
-        self.send_log("Im done executing")
+        send_log("Im done executing")
         exit(0)
 
     for i in pids:
@@ -141,13 +136,25 @@ class BusinessUnit:
         scan_id = ""
         for line in f:
           if line[:16] == "Nmap scan report":
-            scan_id = line[22:].strip(' \n')
+            scan_id = line[21:].strip(' \n')
             continue
           if line[0].isnumeric():
+            if "open|filtered" in line:
+                self.stats["open|filtered"] = self.stats["open|filtered"] + 1
+            elif "closed|filtered" in line:
+                self.stats["closed|filtered"] = self.stats["closed|filtered"] + 1
+            elif "filtered" in line:
+                self.stats["filtered"] = self.stats["filtered"] + 1
+            elif "closed" in line:
+                self.stats["closed"] = self.stats["closed"] + 1
+            elif "open" in line:
+                self.stats["open"] = self.stats["open"] + 1
+
             explode = line.split(' ')
             final = scan_id + ","
             for i in explode:
-              final = final + i.strip(' \n\t\r') + ","
+              if len(i) > 0:
+                final = final + i.strip(' \n\t\r') + ","
             master_out.append(final.strip(' \t\r\n'))
     return master_out
 
@@ -158,7 +165,7 @@ class BusinessUnit:
     with open(self.outfile, 'w') as f:
       for line in out:
         f.write(line + "\n")
-
+    os.system("zip " + self.outfile + ".zip " + self.outfile) 
 
 
 

@@ -36,7 +36,9 @@
 
 from nmap_fork import *
 from BusinessUnit import *
+from emailing import *
 
+from log import *
 import os
 import sys
 
@@ -48,24 +50,22 @@ if(len(sys.argv) != 2):
   print("\nUsage: python3 limited_port_scan.py \{business_unit\}")
   exit(0)
 
+logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
-business_unit = BusinessUnit(sys.argv[1], FULL_PATH, FULL_PATH + "." + sys.argv[1] + ".log")
+business_unit = BusinessUnit(sys.argv[1], FULL_PATH)
 
 # At this point the object is substantiated and all dependencies have been resolved. 
 
 business_unit.read_file_ports()
 business_unit.read_file_base()
 business_unit.scan()
+
+
 business_unit.collect()
 
+sendMail(['Daniel.Thurau@nbcuni.com'],'Scanner@KaliBox.com',"test",'Heya buddy! Say hello to Python! :)',['nmap-template/output-template.csv.zip',])
 
-
-
-
-
-
-
-
-
-
+# Flush stdout if fork has failed
+sys.stdout = sys.__stdout__
+sys.stdout.flush()
 
