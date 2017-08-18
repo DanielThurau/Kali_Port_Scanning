@@ -63,7 +63,13 @@ business_unit.scan()
 
 business_unit.collect()
 
-sendMail(['Daniel.Thurau@nbcuni.com'],'Scanner@KaliBox.com',"test",'Heya buddy! Say hello to Python! :)',['nmap-template/output-template.csv.zip',])
+#sendMail(['Daniel.Thurau@nbcuni.com'],'Scanner@KaliBox.com',"test",'Heya buddy! Say hello to Python! :)',['nmap-template/output-template.csv.zip',])
+# guarantee the .conf file has entered emails
+
+if len(business_unit.emails) > 0:
+    os.system("cp " + business_unit.outfile + ".zip " + FULL_PATH)
+    sendMail(business_unit.emails,'Scanner@KaliBox.com',business_unit.stats, "output-" + business_unit.business_unit + ".csv.zip", business_unit.machineCount)
+    os.system("rm output-" + business_unit.business_unit + ".csv.zip")
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__

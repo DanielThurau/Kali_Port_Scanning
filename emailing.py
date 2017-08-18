@@ -6,14 +6,23 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import os
 
-def sendMail(to, fro, subject, text, files=[],server="localhost"):
+def sendMail(to, fro, stats,file, mc,server="localhost"):
     print(to)
     print(fro)
-    print(subject)
-    print(text)
-    print(files)
+    print(stats)
+    print(file)
     assert type(to)==list
-    assert type(files)==list
+
+    subject = "Scan results from Kali on " + formatdate(localtime=True) + ". There are " + str(stats["open"] + stats["open|filtered"]) + " actionable events, and " + str(mc) + " peripherals scanned."
+ 
+
+    if stats["open"] > 0 or stats["open|filtered"] > 0:
+        subject = "ACTION REQUIRED: " + subject 
+
+    text = ""
+    for item in stats:
+        text = text + item + ":" + str(stats[item]) + "\n"
+
 
 
     msg = MIMEMultipart()
@@ -24,13 +33,13 @@ def sendMail(to, fro, subject, text, files=[],server="localhost"):
 
     msg.attach( MIMEText(text) )
 
-    for file in files:
-        part = MIMEBase('application', "octet-stream")
-        part.set_payload( open(file,"rb").read() )
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', 'attachment; filename="%s"'
-                         % os.path.basename(file))
-        msg.attach(part)
+    
+    part = MIMEBase('application', "octet-stream")
+    part.set_payload( open(file,"rb").read() )
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', 'attachment; filename="%s"'
+                    % os.path.basename(file))
+    msg.attach(part)
     
     try:
         smtp = smtplib.SMTP(server)
@@ -40,8 +49,6 @@ def sendMail(to, fro, subject, text, files=[],server="localhost"):
     except smtplib.SMTPException as e:
         print("Error: unable to send email")
         print(e)
-
-
 
 # Example:
 #sendMail(['Daniel <daniel.thurau@nbcuni.com>'],'Scanner <Scanner@KaliBox.com>','Hello Python!','Heya buddy! Say hello to Python! :)',['output-perimeter.csv',])
