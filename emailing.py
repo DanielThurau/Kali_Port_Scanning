@@ -9,7 +9,7 @@ import os
 def sendMail(to, fro, stats,file, mc, mobile=False, server="localhost"):
     """Send formatted email using information from a BuisnessUnit Object"""
     assert type(to)==list
-
+    print(file)
     subject = "Scan results from Kali on " + formatdate(localtime=True) + ". There are " + str(stats["open"] + stats["open|filtered"]) + " actionable events, and " + str(mc) + " peripherals scanned."
  
 
@@ -20,29 +20,28 @@ def sendMail(to, fro, stats,file, mc, mobile=False, server="localhost"):
     for item in stats:
         text = text + item + ":" + str(stats[item]) + "\n"
 
-    if mobile:
+    if mobile == True:
         text = text + "\n\n"
         with open(file, 'r') as f:
             for line in f:
                 if 'open' in line:
-                    text = text + line + "\n"
+                    text = text + line
 
     msg = MIMEMultipart()
     msg['From'] = fro
     msg['To'] = COMMASPACE.join(to)
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
+        
+    msg.attach( MIMEText(text) )
 
-    if not mobile:
-        msg.attach( MIMEText(text) )
-
-    
-    part = MIMEBase('application', "octet-stream")
-    part.set_payload( open(file,"rb").read() )
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', 'attachment; filename="%s"'
+    if mobile == False: 
+        part = MIMEBase('application', "octet-stream")
+        part.set_payload( open(file,"rb").read() )
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', 'attachment; filename="%s"'
                     % os.path.basename(file))
-    msg.attach(part)
+        msg.attach(part)
     
     try:
         smtp = smtplib.SMTP(server)
