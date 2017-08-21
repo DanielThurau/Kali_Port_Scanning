@@ -35,9 +35,10 @@
 # 
 
 from BusinessUnit import *
-from emailing import *
+from Emailing import *
+from Upload import *
 
-from log import *
+from Log import *
 import os
 import sys
 
@@ -62,14 +63,9 @@ business_unit.scan()
 
 business_unit.collect()
 
-#sendMail(['Daniel.Thurau@nbcuni.com'],'Scanner@KaliBox.com',"test",'Heya buddy! Say hello to Python! :)',['nmap-template/output-template.csv.zip',])
-# guarantee the .conf file has entered emails
-print("emails:")
-print(business_unit.emails)
-print("mobile emails:")
-print(business_unit.mobile)
-print("oitfile:")
-print(business_unit.outfile)
+links = uploadToDropbox([business_unit.outfile], business_unit.nmap_dir)
+print(links)
+
 
 if len(business_unit.emails) > 0:
     sendMail(business_unit.emails,'Scanner@KaliBox.com',business_unit.stats, business_unit.outfile + ".zip", business_unit.machineCount)

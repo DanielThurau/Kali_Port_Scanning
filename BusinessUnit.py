@@ -1,4 +1,4 @@
-from log import *
+from Log import *
 from ScanObject import *
 
 
