@@ -7,10 +7,7 @@ from email import encoders
 import os
 
 def sendMail(to, fro, stats,file, mc,server="localhost"):
-    print(to)
-    print(fro)
-    print(stats)
-    print(file)
+    """Send formatted email using information from a BuisnessUnit Object"""
     assert type(to)==list
 
     subject = "Scan results from Kali on " + formatdate(localtime=True) + ". There are " + str(stats["open"] + stats["open|filtered"]) + " actionable events, and " + str(mc) + " peripherals scanned."
@@ -22,7 +19,6 @@ def sendMail(to, fro, stats,file, mc,server="localhost"):
     text = ""
     for item in stats:
         text = text + item + ":" + str(stats[item]) + "\n"
-
 
 
     msg = MIMEMultipart()
