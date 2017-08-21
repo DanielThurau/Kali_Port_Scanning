@@ -5,11 +5,13 @@ from collections import deque
 
 class ScanObject:
   def __init__(self):
+    """Contructor of object containing a single nmap scan entity"""
     self.start_ip = self.subnet = self.range = self.ports = ""
     self.command = ""
     self.outfile = ""
 
   def getMachineCount(self):
+    """Determines the number of IP's that will be scanned with this object instance"""
     if self.subnet is None and self.range is None:
       return 1
     elif self.range is None:
@@ -18,9 +20,9 @@ class ScanObject:
       end = self.start_ip.split('.')[3]
       return int(self.range) - int(end) + 1
 
-  # populates the fields and creates the command to be returned 
   def populate(self, line):
-    # parse any ports
+    """From a given legal line of input, determine type of input for nmap"""
+    # Parse any individual ports
     if ':' in line:
       line = line.split(':')
       self.ports = line[1];
@@ -37,11 +39,13 @@ class ScanObject:
       self.subnet = line[1]
       self.start_ip = line[0]
       self.range = None
+    # 1.2.3.0-255 -> 1.2.3.0 & 255
     elif '-' in line:
       line = line.split('-')
       self.range = line[1]
       self.start_ip = line[0]
       self.subnet = None
+    # 1.2.3.4 -> 1.2.3.4
     else:
       self.start_ip = line
       self.range = None
@@ -49,6 +53,7 @@ class ScanObject:
     return True
 
   def createCommand(self, exclusion_string, global_ports, out_dir):
+    """Takes input from the BusinessUnit object that owns this ScanObject and creates the command for the system to execute"""
     # THIS IS ALLOWED. CHECKS HAVE BEEN MADE, bad_ports 
     # will always have a single comma after. self.ports 
     # will never

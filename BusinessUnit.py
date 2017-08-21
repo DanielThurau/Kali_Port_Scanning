@@ -57,6 +57,7 @@ class BusinessUnit:
       exit(0)
 
   def read_file_ports(self):
+    """ Parse and store ports to be general ports in ports_bad_{business_unit}"""
     try:
       with open(self.ports_file, 'r') as f:
         for line in f:
@@ -80,6 +81,7 @@ class BusinessUnit:
       exit(1)
 
   def read_file_base(self):
+    """ Parse and store networks, subnets, ranges, and individual IP's for scanning from ports_baseline_{business_unit}.conf"""
     try:
       with open(self.ip_file, 'r') as f:
         for line in f:
@@ -119,6 +121,7 @@ class BusinessUnit:
 
 
   def scan(self):
+    """Execute scanning commands"""
     pids = []
     for obj in self.BU_scan_objs:
       pid = os.fork()
@@ -135,6 +138,7 @@ class BusinessUnit:
 
 
   def parse_output(self):
+    """Parse and assemble human readable csv report of all nmap results"""
     master_out = []
 
     for obj in self.BU_scan_objs:
