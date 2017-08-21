@@ -34,7 +34,6 @@
 #        Refer to the manual for expanded explanation and for config folder setup.
 # 
 
-from nmap_fork import *
 from BusinessUnit import *
 from emailing import *
 
@@ -70,6 +69,9 @@ if len(business_unit.emails) > 0:
     os.system("cp " + business_unit.outfile + ".zip " + FULL_PATH)
     sendMail(business_unit.emails,'Scanner@KaliBox.com',business_unit.stats, "output-" + business_unit.business_unit + ".csv.zip", business_unit.machineCount)
     os.system("rm output-" + business_unit.business_unit + ".csv.zip")
+
+if len(business_unit.mobile) > 0:
+  sendMail(business_unit.mobile, 'Scanner@KaliBox.com', business_unit.stats, business_unit.outfile, business_unit.machineCount, True)
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__

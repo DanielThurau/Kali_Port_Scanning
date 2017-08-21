@@ -20,6 +20,7 @@ class BusinessUnit:
     # Object populates this
     self.machineCount = 0;
     self.emails = []
+    self.mobile = []
     self.exclude_string = ""
     self.BU_scan_objs = []
     self.stats = {"open":0, "open|filtered":0, "filtered":0, "closed|filtered":0, "closed":0}
@@ -97,7 +98,10 @@ class BusinessUnit:
           elif '#' in line:
             line = line.split('#')[0]
           elif '@' in line:
-            self.emails.append(line.strip(' \t\n\r'))
+            if "-m" in line:
+              self.mobile.append(line.split(' ')[0])
+            else:
+              self.emails.append(line.strip(' \t\n\r'))
             continue
 
           # Business unit scan object

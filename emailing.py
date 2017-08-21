@@ -6,7 +6,7 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import os
 
-def sendMail(to, fro, stats,file, mc,server="localhost"):
+def sendMail(to, fro, stats,file, mc, mobile=False, server="localhost"):
     """Send formatted email using information from a BuisnessUnit Object"""
     assert type(to)==list
 
@@ -20,6 +20,12 @@ def sendMail(to, fro, stats,file, mc,server="localhost"):
     for item in stats:
         text = text + item + ":" + str(stats[item]) + "\n"
 
+    if mobile:
+        text = text + "\n\n"
+        with open(file, 'r') as f:
+            for line in f:
+                if 'open' in line:
+                    text = text + line + "\n"
 
     msg = MIMEMultipart()
     msg['From'] = fro
@@ -27,7 +33,8 @@ def sendMail(to, fro, stats,file, mc,server="localhost"):
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
 
-    msg.attach( MIMEText(text) )
+    if not mobile:
+        msg.attach( MIMEText(text) )
 
     
     part = MIMEBase('application', "octet-stream")
