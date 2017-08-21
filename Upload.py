@@ -2,7 +2,7 @@ import datetime
 import dropbox
 import os
 
-with open('dropbox.txt', 'r') as f:
+with open(os.path.dirname(os.path.realpath(__file__)) + '/dropbox.txt', 'r') as f:
     for line in f:
         DROP_BOX_API = line.strip(' \n\t\r')
 
