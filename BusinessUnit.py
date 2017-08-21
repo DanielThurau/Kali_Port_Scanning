@@ -1,14 +1,16 @@
-from ScanObject import *
 from log import *
+from ScanObject import *
 
-import os
+
 import datetime
-import time
+import os
 import subprocess
+import time
+
 
 class BusinessUnit:
   def __init__(self, p_name, p_path):
-    # Set up logging
+    """ BusinessUnit Class Constructor """
 
     # Provided input
     send_log("Scan started on " + p_name)
@@ -29,21 +31,26 @@ class BusinessUnit:
 
   # Check that all neccessary configuration dependancies exist  
   def CheckDeps(self):
+    """ Private Method that depends on self.path existing in the object """
+    if self.path == "":
+      send_log("CheckDeps called on " + self.business_unit + " object but does not contain a self.path defined variable. ")
+      exit(1)
     self.config_dir = self.path + "config/"
-    self.checkExist(self.config_dir)
+    self.CheckExist(self.config_dir)
 
     self.ports_file = self.config_dir + "ports_bad_" + self.business_unit
-    self.checkExist(self.ports_file)
+    self.CheckExist(self.ports_file)
 
     self.ip_file = self.config_dir + "ports_baseline_" + self.business_unit + ".conf"
-    self.checkExist(self.ip_file)
+    self.CheckExist(self.ip_file)
 
     self.nmap_dir = self.path + "nmap-" + self.business_unit + "/"
     if not os.path.exists(self.nmap_dir):
       send_log(self.nmap_dir + " does not exist... creating now")
       os.system("mkdir " + self.nmap_dir)
 
-  def checkExist(self, file):
+  def CheckExist(self, file):
+    """ Helper private method for CheckDeps """
     if not os.path.exists(file):
       print(file + " does not exist. Exiting...")
       send_log(file+ " does not exist.")

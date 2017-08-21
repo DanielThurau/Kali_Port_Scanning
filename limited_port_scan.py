@@ -9,7 +9,7 @@
 #  script that could generate csv reports that reported on the status of select
 #  ports on provided IP addresses. v1.1 also uses nmap, and added concurrency because
 #  of the massive amount of scannable ports.
-#
+# 
 #     ___________________________________________________________________________________________________________________________________________
 #    |    Version   |       Author         |  Release Date  |       Contact            |                       Comment                           |
 #    |______________|______________________|________________|__________________________|_________________________________________________________|
