@@ -1,3 +1,8 @@
 dropbox.txt
+config/*
+!config/ports_bad_template.template
+!config/ports_baseline_template.conf.template
+nmap-*
+.log
 __pycache__/
 .DS_Store

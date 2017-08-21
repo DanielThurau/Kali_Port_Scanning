@@ -64,14 +64,13 @@ business_unit.scan()
 business_unit.collect()
 
 links = uploadToDropbox([business_unit.outfile], business_unit.nmap_dir)
-print(links)
 
 
 if len(business_unit.emails) > 0:
-    sendMail(business_unit.emails,'Scanner@KaliBox.com',business_unit.stats, business_unit.outfile + ".zip", business_unit.machineCount)
+    sendMail(business_unit.emails,'Scanner@KaliBox.com',business_unit.stats, business_unit.outfile + ".zip", business_unit.machineCount, links)
 
 if len(business_unit.mobile) > 0:
-  sendMail(business_unit.mobile, 'Scanner@KaliBox.com', business_unit.stats, business_unit.outfile, business_unit.machineCount, True)
+  sendMail(business_unit.mobile, 'Scanner@KaliBox.com', business_unit.stats, business_unit.outfile, business_unit.machineCount, links, True)
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__

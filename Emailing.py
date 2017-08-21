@@ -6,17 +6,23 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import os
 
-def sendMail(to, fro, stats,file, mc, mobile=False, server="localhost"):
+def sendMail(to, fro, stats, file, mc, dropboxLinks, mobile=False, server="localhost"):
     """Send formatted email using information from a BuisnessUnit Object"""
     assert type(to)==list
-    print(file)
+    assert type(dropboxLinks)==list
+    
     subject = "Scan results from Kali on " + formatdate(localtime=True) + ". There are " + str(stats["open"] + stats["open|filtered"]) + " actionable events, and " + str(mc) + " peripherals scanned."
  
-
     if stats["open"] > 0 or stats["open|filtered"] > 0:
         subject = "ACTION REQUIRED: " + subject 
 
     text = ""
+    
+    if len(dropboxLinks) > 0 and mobile == True:
+        text = "DropBox link:\n"
+        for link in dropboxLinks:
+            text = text + "     " + link + "\n"
+    
     for item in stats:
         text = text + item + ":" + str(stats[item]) + "\n"
 
