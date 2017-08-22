@@ -58,13 +58,14 @@ business_unit = BusinessUnit(sys.argv[1], FULL_PATH)
 
 business_unit.read_file_ports()
 business_unit.read_file_base()
-business_unit.scan()
+#business_unit.scan()
 
 
 business_unit.collect()
 
-links = uploadToDropbox([business_unit.outfile], business_unit.nmap_dir)
 
+links = []
+links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
 
 if len(business_unit.emails) > 0:
     sendMail(business_unit.emails,'Scanner@KaliBox.com',business_unit.stats, business_unit.outfile + ".zip", business_unit.machineCount, links)

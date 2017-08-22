@@ -6,7 +6,7 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import os
 
-def sendMail(to, fro, stats, file, mc, dropboxLinks, mobile=False, server="localhost"):
+def sendMail(to, fro, stats, file, mc, dropboxLinks=[], mobile=False, server="localhost"):
     """Send formatted email using information from a BuisnessUnit Object"""
     assert type(to)==list
     assert type(dropboxLinks)==list
@@ -21,7 +21,7 @@ def sendMail(to, fro, stats, file, mc, dropboxLinks, mobile=False, server="local
     if len(dropboxLinks) > 0 and mobile == True:
         text = "DropBox link:\n"
         for link in dropboxLinks:
-            text = text + "     " + link + "\n"
+            text = text + "     " + link + "\n\n"
     
     for item in stats:
         text = text + item + ":" + str(stats[item]) + "\n"
