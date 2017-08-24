@@ -73,14 +73,14 @@ business_unit = BusinessUnit(args.business_unit, FULL_PATH, bs, org)
 business_unit.read_file_ports()
 business_unit.read_file_base()
 
-#business_unit.scan()
+business_unit.scan()
 
 
 business_unit.collect()
 
 
 links = []
-#links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
+links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
 
 if len(business_unit.emails) > 0:
     sendMail(business_unit, links)
