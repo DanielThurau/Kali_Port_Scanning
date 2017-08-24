@@ -36,9 +36,10 @@
 
 from BusinessUnit import *
 from Emailing import *
+from Log import *
 from Upload import *
 
-from Log import *
+import argparse
 import os
 import sys
 
@@ -46,18 +47,32 @@ FULL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
 LOG_FILE = FULL_PATH + ".log"
 UNIX_LIKE = True
 
-if(len(sys.argv) != 2):
-  print("\nUsage: python3 limited_port_scan.py \{business_unit\}")
-  exit(0)
-
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
-business_unit = BusinessUnit(sys.argv[1], FULL_PATH)
+
+parser = argparse.ArgumentParser(description='Lets scan some ports')
+
+parser.add_argument("business_unit", help="The business unit the scan will be performed on")
+parser.add_argument("-b", "--businessName", help="Additional information for more verbose emails")
+parser.add_argument("-o", "--org", help="Additional information on the organization for this scan")
+
+
+args = parser.parse_args()
+
+bs = org = ""
+if args.businessName:
+    bs = args.businessName
+if args.org:
+    org = args.org
+
+business_unit = BusinessUnit(args.business_unit, FULL_PATH, bs, org)
+
 
 # At this point the object is substantiated and all dependencies have been resolved. 
 
 business_unit.read_file_ports()
 business_unit.read_file_base()
+
 #business_unit.scan()
 
 
@@ -65,13 +80,10 @@ business_unit.collect()
 
 
 links = []
-links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
+#links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
 
 if len(business_unit.emails) > 0:
-    sendMail(business_unit.emails,'Scanner@KaliBox.com',business_unit.stats, business_unit.outfile + ".zip", business_unit.machineCount, links)
-
-if len(business_unit.mobile) > 0:
-  sendMail(business_unit.mobile, 'Scanner@KaliBox.com', business_unit.stats, business_unit.outfile, business_unit.machineCount, links, True)
+    sendMail(business_unit, links)
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__

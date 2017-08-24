@@ -9,13 +9,15 @@ import time
 
 
 class BusinessUnit:
-  def __init__(self, p_name, p_path):
+  def __init__(self, p_name, p_path, p_verbose="", p_org = ""):
     """ BusinessUnit Class Constructor """
 
     # Provided input
     send_log("Scan started on " + p_name)
     self.business_unit = p_name
     self.path = p_path
+    self.verbose = p_verbose
+    self.org = p_org
 
     # Object populates this
     self.machineCount = 0;

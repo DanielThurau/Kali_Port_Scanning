@@ -11,6 +11,8 @@ dbx = dropbox.Dropbox(DROP_BOX_API)
 dbx.users_get_current_account()
 
 def uploadToDropbox(files, folder_dest):
+  print(files)
+  print(folder_dest)
   #  assert
   returnLinks = []
   CHUNKSIZE = 2 * 1024 *1024
