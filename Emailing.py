@@ -19,7 +19,8 @@ def sendMail(BU, dropboxLinks=[], server="localhost"):
 #    to = BU.emails/BU.mobile
 #    fro = "Scanner@KaliBox.com
 #    stats = BU.stats
-#    file = BU.outfile
+    file = BU.outfile
+    zipFile = BU.outfile + ".zip"
 #    mc = BU.machineCount
 #    dropboxlinks = 'passed by ref'
 #    mobile = if len(BU.mobiles > 0)
@@ -57,41 +58,49 @@ def sendMail(BU, dropboxLinks=[], server="localhost"):
     for item in BU.stats:
         text = text + item + ":" + str(BU.stats[item]) + "\n"
 
-    print(text)
-"""
-    if mobile == True:
-        text = text + "\n\n"
+    if len(BU.mobile) > 0:
+        mobileText = text + "\n\n"
         with open(file, 'r') as f:
             for line in f:
                 if 'open' in line:
-                    text = text + line
-
-    msg = MIMEMultipart()
-    msg['From'] = fro
-    msg['To'] = COMMASPACE.join(to)
-    msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = subject
-        
-    msg.attach( MIMEText(text) )
-
-    if mobile == False: 
-        part = MIMEBase('application', "octet-stream")
-        part.set_payload( open(file,"rb").read() )
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', 'attachment; filename="%s"'
-                    % os.path.basename(file))
-        msg.attach(part)
+                    mobileText = mobileText + line
     
-    try:
-        smtp = smtplib.SMTP(server)
-        smtp.sendmail(fro, to, msg.as_string() )
-        smtp.close()
-        print("Successfully sent mail")
-    except smtplib.SMTPException as e:
-        print("Error: unable to send email")
-        print(e)
+    if len(BU.mobile) > 0:
+        emailList = [BU.emails, BU.mobile]
+        textList = [text, mobileText]
+    else:
+        emailList = [BU.emails]
+        textList = [text]
+        
+    
+        
+    for i in range(0,len(emailList)):
+        
+        msg = MIMEMultipart()
+        msg['From'] = "Scanner@KaliBox.com"
+        msg['To'] = COMMASPACE.join(emailList[i])
+        msg['Date'] = formatdate(localtime=True)
+        msg['Subject'] = subject
+        
+        msg.attach( MIMEText(textList[i]) )
 
-"""
+        if i == 0: 
+            part = MIMEBase('application', "octet-stream")
+            part.set_payload( open(zipFile,"rb").read() )
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', 'attachment; filename="%s"'
+                    % os.path.basename(zipFile))
+            msg.attach(part)
+    
+        try:
+            smtp = smtplib.SMTP(server)
+            smtp.sendmail("Scanner@KaliBox.com", emailList[i], msg.as_string() )
+            smtp.close()
+            print("Successfully sent mail")
+        except smtplib.SMTPException as e:
+            print("Error: unable to send email")
+            print(e)
+
 
 # Example:
 #sendMail(['Daniel <daniel.thurau@nbcuni.com>'],'Scanner <Scanner@KaliBox.com>','Hello Python!','Heya buddy! Say hello to Python! :)',['output-perimeter.csv',])
