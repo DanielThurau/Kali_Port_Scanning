@@ -50,10 +50,6 @@ def sendMail(BU, dropboxLinks=[], server="localhost"):
 
     text = text + "     Completed scan on " + local.format('YYY-MM-DD HH:mm:ss') + " with " + str(BU.machineCount) + " machines scanned.\n\n"
     
-    if len(dropboxLinks) > 0: 
-        text = text + "DropBox download link:\n"
-        for link in dropboxLinks:
-            text = text + "     " + link + "\n\n"
     
     for item in BU.stats:
         text = text + item + ":" + str(BU.stats[item]) + "\n"
@@ -64,7 +60,18 @@ def sendMail(BU, dropboxLinks=[], server="localhost"):
             for line in f:
                 if 'open' in line:
                     mobileText = mobileText + line
-    
+   
+
+    if len(dropboxLinks) > 0: 
+        text = text + "\n\nDropBox download link:\n"
+        mobileText = mobileText + "\n\nDropBox download link:\n"
+        for link in dropboxLinks:
+            text = text + "     " + link + "\n\n"
+            mobileText = mobileText + "     " + link + "\n\n"
+
+
+
+
     if len(BU.mobile) > 0:
         emailList = [BU.emails, BU.mobile]
         textList = [text, mobileText]
