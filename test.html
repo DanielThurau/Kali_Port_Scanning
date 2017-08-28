@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Something output</title>
+</head>
+<body>
+
+    <script>
+    function myFunction(inputID, hopefullyString) {
+      // console.log(hopefullyString)
+      var input, filter, table, tr, td, i;
+      input = document.getElementById(hopefullyString);
+      filter = input.value.toUpperCase();
+      // filter = input.value;
+      console.log("FILTER:" + filter)
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[inputID];
+        if (td) {
+          // console.log("evaluates to:" + td.innerHTML)
+          if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }       
+      }
+    }
+    </script>
+
+
+    <div id="first" style="width: 300px; float:left; border: 1px solid red;">
+      <h1 style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;">Nmap  Scan Report</h1>
+      <p style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;">Ext. Vuln. Scan</p>
+      <p style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;">NBC</p>
+      <p style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;">~/10 items Scanned</p>
+      <p style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;">Timestamp</p>
+      <p style="text-decoration: underline; margin-left: 5px; margin-top: 0px; margin-bottom: 0px;">Stats:</p>
+      <p style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;">open: 1</p>
+      <p style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;">open|filtered: 1</p>
+      <p style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;">filtered: 1</p>
+      <p style="margin-left: 40px; margin-top: 0px; margin-bottom: 0px;">closed|filtered: 1</p>
+      <p style="margin-left: 40px; margin-top: 0px; margin-bottom: 0px;">closed: 1</p>
+    </div>
+   
+   
+   <div id="second" style="border: 1px solid green;overflow: hidden;">
+   <input type="text" id="myInput" onkeyup="myFunction(0, 'myInput')" placeholder="Search for IP.." title="Type in a name" style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;">
+   <input type="text" id="myInput1" onkeyup="myFunction(1, 'myInput1')" placeholder="Search for Port.." title="Type in a name" style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;">
+   <input type="text" id="myInput2" onkeyup="myFunction(2, 'myInput2')" placeholder="Search for Type.." title="Type in a name" style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;">
+   <input type="text" id="myInput3" onkeyup="myFunction(3, 'myInput3')" placeholder="Search for Status.." title="Type in a name" style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;">
+    
+  <table border="1|0" id="myTable">
+  <tr class="header">
+    <th style="width:100px;">IP</th>
+    <th style="width:100px;">Port</th>
+    <th style="width:100px;">Type</th>
+    <th style="width:100px;">Status</th>
+  </tr>
+  <tr>
+   <td>127.0.0.1</th>
+   <td>22/tcp</th>
+   <td>ssh</th>
+   <td>Open</th>
+  </tr>
+  <tr>
+     <td>127.0.0.2</th>
+     <td>23/tcp</th>
+     <td>telnet</th>
+     <td>Closed</th>
+  </tr>
+</table>
+   </div>
+
+
+
+
+</body>
+</html>
