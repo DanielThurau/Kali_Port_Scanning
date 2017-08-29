@@ -2,9 +2,9 @@ import datetime
 import dropbox
 import os
 
-with open(os.path.dirname(os.path.realpath(__file__)) + '/dropbox.txt', 'r') as f:
-    for line in f:
-        DROP_BOX_API = line.strip(' \n\t\r')
+
+DROP_BOX_API = os.environ['dropbox_key']
+
 
 dbx = dropbox.Dropbox(DROP_BOX_API)
 
