@@ -74,9 +74,9 @@ def generateHTML(BU):
           pass
         with tag('input', type="text", id="myInput1", onkeyup="myFunction(1, 'myInput1')", placeholder="Search for Port..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
-        with tag('input', type="text", id="myInput2", onkeyup="myFunction(2, 'myInput2')", placeholder="Search for Type..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
+        with tag('input', type="text", id="myInput2", onkeyup="myFunction(2, 'myInput2')", placeholder="Search for Status..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
-        with tag('input', type="text", id="myInput2", onkeyup="myFunction(3, 'myInput3')", placeholder="Search for Status..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
+        with tag('input', type="text", id="myInput3", onkeyup="myFunction(3, 'myInput3')", placeholder="Search for Type..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
 
 
@@ -90,9 +90,9 @@ def generateHTML(BU):
             with tag('th', style="width:100px;"):
               text('Port')
             with tag('th', style="width:100px;"):
-              text('Type')
-            with tag('th', style="width:100px;"):
               text('Status')
+            with tag('th', style="width:100px;"):
+              text('Type')
           with open(BU.outfile, 'r') as f:
             for line in f:
               if "open" in line:

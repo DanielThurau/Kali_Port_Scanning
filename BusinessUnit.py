@@ -1,3 +1,4 @@
+from HTMLGenerator import *
 from Log import *
 from ScanObject import *
 
@@ -183,8 +184,7 @@ class BusinessUnit:
       for line in out:
         f.write(line + "\n")
     os.system("zip " + self.outfile + ".zip " + self.outfile) 
-
-
+    generateHTML(self)
 
 
     
