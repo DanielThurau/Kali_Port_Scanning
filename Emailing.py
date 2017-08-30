@@ -13,19 +13,19 @@ local = utc.to('US/Pacific')
 
 
 
-def sendMail(BU, dropboxLinks=[], server="localhost"):
+def sendMail(BU, server="localhost"):
     """Send formatted email using information from a BuisnessUnit Object"""
     
-#    to = BU.emails/BU.mobile
+#    to = BU.emails/BU.mobile/
 #    fro = "Scanner@KaliBox.com
 #    stats = BU.stats
     file = BU.outfile
     zipFile = BU.outfile + ".zip"
+    htmlFile = BU.nmap_dir + "out.html"
 #    mc = BU.machineCount
 #    dropboxlinks = 'passed by ref'
 #    mobile = if len(BU.mobiles > 0)
-#    server = "localhost" 
-    assert type(dropboxLinks)==list
+    server = "localhost" 
 
     # Subject Creation
     subject = "Scan-" + local.format('YYYY-MM-DD HH:mm:ss')
@@ -39,45 +39,11 @@ def sendMail(BU, dropboxLinks=[], server="localhost"):
     if BU.org != "":
         subject = BU.org + "-" + subject
 
-
-    text = ""
-
-    if BU.org != "":
-        text = BU.org + "\n"
-
-    if BU.verbose != "":
-        text = BU.verbose + "-Scan on " + text
-
-    text = text + "     Completed scan on " + local.format('YYY-MM-DD HH:mm:ss') + " with " + str(BU.machineCount) + " machines scanned.\n\n"
     
-    
-    for item in BU.stats:
-        text = text + item + ":" + str(BU.stats[item]) + "\n"
-
-    if len(BU.mobile) > 0:
-        mobileText = text + "\n\n"
-        with open(file, 'r') as f:
-            for line in f:
-                if 'open' in line:
-                    mobileText = mobileText + line
-   
-
-    if len(dropboxLinks) > 0: 
-        text = text + "\n\nDropBox download link:\n"
-        mobileText = mobileText + "\n\nDropBox download link:\n"
-        for link in dropboxLinks:
-            text = text + "     " + link + "\n\n"
-            mobileText = mobileText + "     " + link + "\n\n"
-
-
-
-
     if len(BU.mobile) > 0:
         emailList = [BU.emails, BU.mobile]
-        textList = [text, mobileText]
     else:
         emailList = [BU.emails]
-        textList = [text]
         
     
         
@@ -89,16 +55,26 @@ def sendMail(BU, dropboxLinks=[], server="localhost"):
         msg['Date'] = formatdate(localtime=True)
         msg['Subject'] = subject
         
-        msg.attach( MIMEText(textList[i]) )
+        with open(htmlFile, 'r') as myfile:
+            data = myfile.read()
+        msg.attach(MIMEText(data, 'html'))
+        #msg.attach( MIMEText(text))#
+#        if i == 0: 
+#            part = MIMEBase('application', "octet-stream")
+#            part.set_payload( open(zipFile,"rb").read() )
+#            encoders.encode_base64(part)
+#            part.add_header('Content-Disposition', 'attachment; filename="%s"'
+#                    % os.path.basename(zipFile))
+#            msg.attach(part)
 
-        if i == 0: 
-            part = MIMEBase('application', "octet-stream")
-            part.set_payload( open(zipFile,"rb").read() )
-            encoders.encode_base64(part)
-            part.add_header('Content-Disposition', 'attachment; filename="%s"'
-                    % os.path.basename(zipFile))
-            msg.attach(part)
-    
+
+        part = MIMEBase('application', "octet-stream")
+        part.set_payload( open(htmlFile,"rb").read() )
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', 'attachment; filename="%s"'
+                % os.path.basename(htmlFile))
+        msg.attach(part)
+        print("WTF IS HAPPENING")
         try:
             smtp = smtplib.SMTP(server)
             smtp.sendmail("Scanner@KaliBox.com", emailList[i], msg.as_string() )

@@ -8,7 +8,7 @@ utc = arrow.utcnow()
 local = utc.to('US/Pacific')
 
 
-def generateHTML(BU):
+def generateHTML(BU, links = []):
   doc, tag, text = Doc().tagtext()
 
   js = """
@@ -69,6 +69,12 @@ def generateHTML(BU):
           text("Closed | Filtered: " + str(BU.stats["closed|filtered"]))
         with tag('p', style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
           text("Closed: " + str(BU.stats["closed"]))
+        if len(links) > 0:
+            with tag('p', style="margin-left: 5px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
+                text("Dropbox link:")
+                for link in links:
+                    with tag('p', style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
+                        text(str(link))
       with tag('div', id="second", style="overflow: hidden;"):
         with tag('input', type="text", id="myInput", onkeyup="myFunction(0, 'myInput')", placeholder="Search for IP..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass

@@ -1,7 +1,7 @@
 from HTMLGenerator import *
 from Log import *
 from ScanObject import *
-
+from Upload import *
 
 import datetime
 import os
@@ -27,7 +27,7 @@ class BusinessUnit:
     self.exclude_string = ""
     self.BU_scan_objs = []
     self.stats = {"open":0, "open|filtered":0, "filtered":0, "closed|filtered":0, "closed":0}
-
+    self.links = []
 
     # immediatley populated by checkDeps()
     self.config_dir = self.ports_file = self.ip_file = self.nmap_dir = self.ports = self.outfile = ""
@@ -183,8 +183,9 @@ class BusinessUnit:
     with open(self.outfile, 'w') as f:
       for line in out:
         f.write(line + "\n")
-    os.system("zip " + self.outfile + ".zip " + self.outfile) 
-    generateHTML(self)
+    os.system("zip " +self.outfile + ".zip " + self.outfile) 
+    self.links = uploadToDropbox([self.outfile], '/' + os.path.basename(os.path.normpath(self.nmap_dir)) + '/')
+    generateHTML(self, self.links)
 
 
     

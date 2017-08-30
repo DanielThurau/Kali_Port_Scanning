@@ -37,7 +37,6 @@
 from BusinessUnit import *
 from Emailing import *
 from Log import *
-from Upload import *
 
 import argparse
 import os
@@ -79,11 +78,12 @@ business_unit.scan()
 business_unit.collect()
 
 
-links = []
-links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
-
+#links = []
+#links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
+#uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
+#print(links)
 if len(business_unit.emails) > 0:
-    sendMail(business_unit, links)
+    sendMail(business_unit)
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__
