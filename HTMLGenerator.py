@@ -1,3 +1,5 @@
+import Log
+
 import arrow
 from yattag import Doc
 from yattag import indent
@@ -8,7 +10,10 @@ utc = arrow.utcnow()
 local = utc.to('US/Pacific')
 
 
-def generateHTML(BU, links = []):
+def GenerateHTML(BU, links = []):
+  Log.send_log("Generating HTML output for " + BU.business_unit)
+
+
   doc, tag, text = Doc().tagtext()
 
   js = """
@@ -54,7 +59,7 @@ def generateHTML(BU, links = []):
         with tag('p', style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
           text(BU.org)
         with tag('p', style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
-          text(str(BU.machineCount) + " items Scanned")
+          text(str(BU.machine_count) + " items Scanned")
         with tag('p', style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
           text(local.format('YYYY-MM-DD HH:mm:ss'))
         with tag('p', style="text-decoration: underline; margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
@@ -69,10 +74,10 @@ def generateHTML(BU, links = []):
           text("Closed | Filtered: " + str(BU.stats["closed|filtered"]))
         with tag('p', style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
           text("Closed: " + str(BU.stats["closed"]))
-        if len(links) > 0:
+        if len(BU.links) > 0:
             with tag('p', style="margin-left: 5px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
                 text("Dropbox link:")
-                for link in links:
+                for link in Bu.links:
                     with tag('p', style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
                         text(str(link))
       with tag('div', id="second", style="overflow: hidden;"):
@@ -84,8 +89,6 @@ def generateHTML(BU, links = []):
           pass
         with tag('input', type="text", id="myInput3", onkeyup="myFunction(3, 'myInput3')", placeholder="Search for Type..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
-
-
 
 
 
@@ -113,15 +116,6 @@ def generateHTML(BU, links = []):
                   with tag('td'):
                     text(test[3])
           
-
-
-
-
-
-
-
-
-
   with open(BU.nmap_dir + 'out.html', 'w') as f:
     f.write(indent(doc.getvalue()))
   with open(BU.nmap_dir + 'out.html', 'r+') as f:
@@ -130,8 +124,9 @@ def generateHTML(BU, links = []):
         f.write("<!DOCTYPE html>".rstrip('\r\n') + '\n' + content)
 
   with fileinput.FileInput(BU.nmap_dir + 'out.html', inplace=True) as file:
-      for line in file:
-          print(line.replace('&gt;', '>'), end='')
-  with fileinput.FileInput(BU.nmap_dir + 'out.html', inplace=True, backup='.bak') as file:
-      for line in file:
-          print(line.replace('&lt;', '<'), end='')
+    for line in file:
+      print(line.replace('&gt;', '>'), end='')
+  with fileinput.FileInput(BU.nmap_dir + 'out.html', inplace=True) as file:
+    for line in file:
+      print(line.replace('&lt;', '<'), end='')
+  Log.send_log("Finished generating HTML output for " + BU.business_unit)

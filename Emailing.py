@@ -7,25 +7,14 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import os
 
-
+# Timestamp init
 utc = arrow.utcnow()
 local = utc.to('US/Pacific')
 
-
-
-def sendMail(BU, server="localhost"):
+def SendMail(BU, server="localhost"):
     """Send formatted email using information from a BuisnessUnit Object"""
-    
-#    to = BU.emails/BU.mobile/
-#    fro = "Scanner@KaliBox.com
-#    stats = BU.stats
-    file = BU.outfile
-    zipFile = BU.outfile + ".zip"
-    htmlFile = BU.nmap_dir + "out.html"
-#    mc = BU.machineCount
-#    dropboxlinks = 'passed by ref'
-#    mobile = if len(BU.mobiles > 0)
-    server = "localhost" 
+
+    htmlFile = BU.nmap_dir + "out.html" 
 
     # Subject Creation
     subject = "Scan-" + local.format('YYYY-MM-DD HH:mm:ss')
@@ -48,7 +37,6 @@ def sendMail(BU, server="localhost"):
     
         
     for i in range(0,len(emailList)):
-        
         msg = MIMEMultipart()
         msg['From'] = "Scanner@KaliBox.com"
         msg['To'] = COMMASPACE.join(emailList[i])
@@ -58,15 +46,6 @@ def sendMail(BU, server="localhost"):
         with open(htmlFile, 'r') as myfile:
             data = myfile.read()
         msg.attach(MIMEText(data, 'html'))
-        #msg.attach( MIMEText(text))#
-#        if i == 0: 
-#            part = MIMEBase('application', "octet-stream")
-#            part.set_payload( open(zipFile,"rb").read() )
-#            encoders.encode_base64(part)
-#            part.add_header('Content-Disposition', 'attachment; filename="%s"'
-#                    % os.path.basename(zipFile))
-#            msg.attach(part)
-
 
         part = MIMEBase('application', "octet-stream")
         part.set_payload( open(htmlFile,"rb").read() )
@@ -84,6 +63,3 @@ def sendMail(BU, server="localhost"):
             print("Error: unable to send email")
             print(e)
 
-
-# Example:
-#sendMail(['Daniel <daniel.thurau@nbcuni.com>'],'Scanner <Scanner@KaliBox.com>','Hello Python!','Heya buddy! Say hello to Python! :)',['output-perimeter.csv',])

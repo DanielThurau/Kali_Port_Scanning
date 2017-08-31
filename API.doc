@@ -1,0 +1,269 @@
+class BusinessUnit
+Location: BusinessUnit.py
+    __init__
+        Description:
+          Constructor for the BusinessUnit Object
+        Arguments: 
+            p_name (string)
+              Name of BusinessUnit. 
+            p_path (string)
+              Path to working directory.
+            p_verbose (string) (opitonal)
+              Optional Argument for extra information printed in report.
+            p_org (string) (optional)
+              Optional Argument to include Organization Name printed in report.
+        Dependencies:
+          Log module
+        Calls:
+          Log.send_log()
+          self.CheckDeps()
+        Callee:
+          User
+    CheckDeps
+        Description:
+          Private Method to check that all config files and directories exist before 
+          reading, then populates variables needed throughout runtime.
+        Arguments:
+          None.
+        Dependencies:
+          Log module
+          os module
+          __init__()
+        Calls:
+          Log.send_log()
+          self.CheckExist()
+        Callee:
+          __init__
+    CheckExist
+        Description:
+          Private helper method that tests existence of a file, and prints standard log message.
+        Arguments:
+          file (string)
+            Path to file to be checked
+        Dependencies:
+          Log module
+          os module
+          CheckDeps
+        Calls:
+          Log.send_log()
+        Callee:
+          CheckDeps
+    ReadPorts
+        Description:
+          Parse ports confgi file and create string of ports to be scanned
+        Arguments:
+          None.
+        Dependencies:
+          Log module
+          self.ports (var)
+          __init__()
+        Calls:
+          Log.send_log()
+        Callee:
+          User
+    ReadBase (toDO)
+        Description:
+          Parse and store networks, subnets, ranges, and individual IP's for scanning. 
+        Arguments:
+          None.
+        Dependencies:
+          Log module
+          self.ip_file (var)
+          __init__()
+          ReadPorts()
+        Calls:
+          self.mobile.append()
+          self.emails.append()
+          self.exclude_string +=
+          ScanObject.__init__()
+          ScanObject.populate()
+          ScanObject.createCommand()
+          self.BU_scan_objs.append()
+          self.machine_count+=
+        Callee:
+          User
+    Scan
+        Description:
+          The piece de la resistancé. Creates a thread for each ScanObject and executes.
+        Arguments:
+          None.
+        Dependencies:
+          Log module
+          self.scan_objs (var)
+          ScanObject.command (var)
+        Calls:
+        Callee:
+          User
+    ParseOutput
+        Description:
+          Private method that parses output from all nmap scans and accumaltes information from them.
+        Arguments:
+          None.
+        Dependencies:
+          Collect()
+          Scan()
+          self.scan_objs (var)
+          ScanObject.outfile
+        Calls:
+        Callee:
+          Collect()
+    Collect (toDO)
+        Description:
+          Collects output of nmap and writes to file, uploads report to DropBox, generates HMTL output.
+        Arguements:
+          None
+        Dependencies:
+          Scan()
+          __init__
+          Log module
+          Upload Module
+          HTMLGenerator module
+        Calls:
+          ParseOutput()
+          Log.send_log
+          Upload.upLoadToDropBox()
+          HTMLGenerator.generateHTML()
+        Callee:
+          User.
+
+Upload Module
+Location: Upload.py
+    Requiremnts:
+      There are two API keys necessary, one is for google and one is for dropbox.
+      Both need to be environemnt vairbles under "dropbox_key", "google_key".
+    UploadToDropbox:
+        Description:
+          Uploads a list of files to dropbox folder.
+        Return:
+          List of shortened Dropbox links to the files.
+        Arguments:
+          files (list)
+            List of strings that are paths to files to be uploaded.
+          folder_dest (string)
+            The relative dropbox folder for the files to be uploaded to.
+        Dependencies:
+          Log module
+        Calls:
+          GetSharableLink
+        Callee:
+          User.
+          BusinessUnit.Collect()
+    GetShareableLink:
+        Description:
+          Helper function that utilizes the DropBox API: create_shared_link_with_settings.
+        Return:
+          Json of the api response.
+        Arguments:
+          path (string)
+            Relative path inside of Dropbox of the file.
+        Dependencies:
+            None.
+
+HTMLGenerator Module
+Location HTMLGenerator.py
+    GenerateHMTL:
+        Description: 
+            Programmatically generates and HTML File with information about the nmap scan.      
+        Arguments:
+          BU (BusinessUnit Object)
+            The BusinessUnit object who's data will be used to generate the HMTL
+        Dependencies:
+          Log Module
+        Calls:
+          None.
+        Callee:
+          BusinessUnit.Collect()
+          User.
+
+
+class ScanObject
+Location ScanObject.py
+    __init__
+      Description:  
+          Constructor for a ScanObject.
+      Arguments:
+          None:
+      Calls:
+          None.
+      Callee:
+          BusinessUnit.ReadBase()
+    GetMachineCount
+      Description:
+          Determines the number of unique IPs a ScanObject will scan.
+      Return:
+          The number of unique IPs a ScanObject will scan (int)
+      Arguments:
+          None.
+      Dependencies:
+          self.range
+          self.subnet
+          self.start_ip
+          ScanObject.Populate()
+          ScanObject.CreateCommand()
+    Populate
+      Description:
+        Recieves some set of scannable IPS and populates necessary values
+      Arguemnts:
+        line (string)
+          a set of IPS
+      Dependencies:
+        None.
+      Calls:
+        None.
+      Callee:
+        BusinessUnit.ReadBase()
+    CreateCommand
+      Description:
+        Creates an nmap command and stores it.
+      Arguments:
+        exclusion_string (string)
+          IPs that are to be exlcuded on every scan
+        global_ports (string)
+          Ports that are to be scanned on every Scan
+        out_dir (string)
+          Path name to the BusinessUnits nmap_dir
+      Dependencies:
+        self.ports (var)
+        self.outfile (var)
+        self.range
+        self.subnet
+        self.start_ip
+      Calls:
+        None.
+      Callee:
+        BusinessUnit.ReadBase
+
+Log module
+Location: Log.py
+
+  send_log
+    Descirption: 
+      Write message to logs with timestamp.
+    Arguments:
+      message (string)
+        Messgae to be written to logs
+    Calls:
+      None
+    Callee:
+      ...
+
+Emailing module
+Location: Emailing.py 
+
+Requirements: 
+  A working SMTP server
+
+SendMail
+  Description:
+    Send alert email using info from BusinessUnit Object
+  Arguments:
+    BU (BusinessUnit Object)
+  Dependencies:
+    None.
+  Calls:
+    None.
+  Callee:
+    User.
+
+
+

@@ -1,8 +1,3 @@
-from os import system as sys
-import subprocess
-from collections import deque
-
-
 class ScanObject:
   def __init__(self):
     """Contructor of object containing a single nmap scan entity"""
@@ -10,7 +5,7 @@ class ScanObject:
     self.command = ""
     self.outfile = ""
 
-  def getMachineCount(self):
+  def GetMachineCount(self):
     """Determines the number of IP's that will be scanned with this object instance"""
     if self.subnet is None and self.range is None:
       return 1
@@ -20,8 +15,11 @@ class ScanObject:
       end = self.start_ip.split('.')[3]
       return int(self.range) - int(end) + 1
 
-  def populate(self, line):
+  def Populate(self, line):
     """From a given legal line of input, determine type of input for nmap"""
+    
+    isinstance(line, str)
+
     # Parse any individual ports
     if ':' in line:
       line = line.split(':')
@@ -52,8 +50,15 @@ class ScanObject:
       self.subnet = None
     return True
 
-  def createCommand(self, exclusion_string, global_ports, out_dir):
+  def CreateCommand(self, exclusion_string, global_ports, out_dir):
     """Takes input from the BusinessUnit object that owns this ScanObject and creates the command for the system to execute"""
+    
+    isinstance(exclusion_string, str)
+    isinstance(global_ports, str)
+    isinstance(out_dir, str)
+
+
+
     # THIS IS ALLOWED. CHECKS HAVE BEEN MADE, bad_ports 
     # will always have a single comma after. self.ports 
     # will never

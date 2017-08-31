@@ -69,21 +69,21 @@ business_unit = BusinessUnit(args.business_unit, FULL_PATH, bs, org)
 
 # At this point the object is substantiated and all dependencies have been resolved. 
 
-business_unit.read_file_ports()
-business_unit.read_file_base()
+business_unit.ReadPorts()
+business_unit.ReadBase()
 
-business_unit.scan()
+business_unit.Scan()
 
 
-business_unit.collect()
+business_unit.Collect()
 
 
 #links = []
 #links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
 #uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
 #print(links)
-if len(business_unit.emails) > 0:
-    sendMail(business_unit)
+if len(business_unit.emails) > 0 or len(business_unit.mobile) > 0:
+    SendMail(business_unit)
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__
