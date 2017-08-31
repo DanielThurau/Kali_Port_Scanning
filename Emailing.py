@@ -53,7 +53,6 @@ def SendMail(BU, server="localhost"):
         part.add_header('Content-Disposition', 'attachment; filename="%s"'
                 % os.path.basename(htmlFile))
         msg.attach(part)
-        print("WTF IS HAPPENING")
         try:
             smtp = smtplib.SMTP(server)
             smtp.sendmail("Scanner@KaliBox.com", emailList[i], msg.as_string() )

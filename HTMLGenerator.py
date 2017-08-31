@@ -77,7 +77,7 @@ def GenerateHTML(BU, links = []):
         if len(BU.links) > 0:
             with tag('p', style="margin-left: 5px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
                 text("Dropbox link:")
-                for link in Bu.links:
+                for link in BU.links:
                     with tag('p', style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
                         text(str(link))
       with tag('div', id="second", style="overflow: hidden;"):
