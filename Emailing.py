@@ -29,10 +29,10 @@ def SendMail(BU, server="localhost"):
         subject = BU.org + "-" + subject
 
     
-    if len(BU.mobile) > 0:
-        emailList = [BU.emails, BU.mobile]
-    else:
-        emailList = [BU.emails]
+    #if len(BU.mobile) > 0:
+    #    emailList = [BU.emails, BU.mobile]
+    #else:
+    emailList = [BU.emails]
         
     
         
