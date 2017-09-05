@@ -89,6 +89,8 @@ def GenerateHTML(BU, links = []):
           pass
         with tag('input', type="text", id="myInput3", onkeyup="myFunction(3, 'myInput3')", placeholder="Search for Type..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
+        with tag('input', type="text", id="myInput4", onkeyup="myFunction(4, 'myInput4')", placeholder="Search for Business..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
+          pass
 
 
 
@@ -102,6 +104,8 @@ def GenerateHTML(BU, links = []):
               text('Status')
             with tag('th', style="width:100px;"):
               text('Type')
+            with tag('th', style="width:100px;"):
+              text('Business')
           with open(BU.outfile, 'r') as f:
             for line in f:
               if "open" in line:
@@ -115,6 +119,8 @@ def GenerateHTML(BU, links = []):
                     text(test[2])
                   with tag('td'):
                     text(test[3])
+                  with tag('td'):
+                    text(test[4])
           
   with open(BU.nmap_dir + 'out.html', 'w') as f:
     f.write(indent(doc.getvalue()))

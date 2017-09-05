@@ -171,7 +171,7 @@ class BusinessUnit:
           for port in scanned_hosts.get_ports():
               nmap_obj = scanned_hosts.get_service(port[0], "tcp")
               if nmap_obj.state == "open" or nmap_obj.state == "open|filtered":
-                out = [scanned_hosts.address, nmap_obj.service, nmap_obj.state, str(nmap_obj.port)]
+                out = [scanned_hosts.address, str(nmap_obj.port), nmap_obj.state, nmap_obj.service]
                 if len(buisness_path) > 0:
                   out.append(master_dict.get(scanned_hosts.address), "")
                 master_out.append(",".join(out))
