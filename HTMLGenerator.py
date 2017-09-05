@@ -81,6 +81,8 @@ def GenerateHTML(BU, links = []):
                     with tag('p', style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
                         text(str(link))
       with tag('div', id="second", style="overflow: hidden;"):
+        with tag('input', type="text", id="myInput5", onkeyup="myFunction(5, 'myInput4')", placeholder="*", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
+          pass
         with tag('input', type="text", id="myInput", onkeyup="myFunction(0, 'myInput')", placeholder="Search for IP..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
         with tag('input', type="text", id="myInput1", onkeyup="myFunction(1, 'myInput1')", placeholder="Search for Port..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
@@ -97,6 +99,8 @@ def GenerateHTML(BU, links = []):
         with tag('table', border="1|0", id="myTable"):
           with tag('tr', klass="header"):
             with tag('th', style="width:100px;"):
+              text('New')
+            with tag('th', style="width:100px;"):
               text('IP')
             with tag('th', style="width:100px;"):
               text('Port')
@@ -111,6 +115,8 @@ def GenerateHTML(BU, links = []):
               if "open" in line:
                 test = line.split(',') 
                 with tag('tr'):
+                  with tag('td'):
+                    text(test[5])
                   with tag('td'):
                     text(test[0])
                   with tag('td'):

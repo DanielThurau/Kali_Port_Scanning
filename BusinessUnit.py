@@ -157,13 +157,26 @@ class BusinessUnit:
     """Parse and assemble human readable csv report of all nmap results"""
     if len(buisness_path) > 0:
       master_dict = {}
+      try:
       with open(buisness_path, "r") as f:
         for line in f:
           test = line.strip(' \n\t\r')
           test = test.split(',')
           master_dict[test[1]] = test[0]
+      f.close() 
 
     master_out = []
+
+
+
+    try:
+      with open(self.nmap_dir + "output-" + self.business_unit + ".bak") as f:
+        last = f.readlines()
+      f.close()
+    except IOError:
+      last = []
+
+
 
     for obj in self.scan_objs:
       nmap_report = libnmap.parser.NmapParser.parse_fromfile(obj.outfile)
@@ -172,9 +185,27 @@ class BusinessUnit:
               nmap_obj = scanned_hosts.get_service(port[0], "tcp")
               if nmap_obj.state == "open" or nmap_obj.state == "open|filtered":
                 out = [scanned_hosts.address, str(nmap_obj.port), nmap_obj.state, nmap_obj.service]
+                
+
+                # append business type
                 if len(buisness_path) > 0:
-                  out.append(master_dict.get(scanned_hosts.address), "")
+                  out.append(master_dict.get(scanned_hosts.address, "") + ",")
+                else:
+                  out.append(",")
+                
+                # append new or not
+                if len(last) > 0:
+                  if len([s for s in last if ",".join(out) in s]) == 0:
+                    out.append("*,")
+                  else:
+                    out.append(",")
+                else:
+                  out.append("*,")
+
+
                 master_out.append(",".join(out))
+
+      
                 self.stats[nmap_obj.state] = self.stats[nmap_obj.state] + 1
               else:
                 self.stats[nmap_obj.state] = self.stats[nmap_obj.state] + 1
@@ -184,11 +215,21 @@ class BusinessUnit:
 
   def Collect(self, buisness_path=""):
     isinstance(buisness_path, str)
+
+
+
     out = self.ParseOutput(buisness_path)
     self.outfile = self.nmap_dir + "output-" + self.business_unit + ".csv";
+
+    try:
+      os.system("cp " + self.outfile + " " + self.nmap_dir + "output-" + self.business_unit + ".bak")
+    except:
+      pass
+
     with open(self.outfile, 'w') as f:
       for line in out:
         f.write(line + "\n")
+
     Log.send_log("Generated CSV report.")
     # upload Report to DropBox
     self.links = Upload.UploadToDropbox([self.outfile], '/' + os.path.basename(os.path.normpath(self.nmap_dir)) + '/')
