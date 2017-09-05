@@ -153,8 +153,16 @@ class BusinessUnit:
       os.waitpid(i, 0)
 
 
-  def ParseOutput(self):
+  def ParseOutput(self, buisness_path = ""):
     """Parse and assemble human readable csv report of all nmap results"""
+    if len(buisness_path) > 0:
+      master_dict = {}
+      with open(buisness_path, "r") as f:
+        for line in f:
+          test = line.strip(' \n\t\r')
+          test = test.split(',')
+          master_dict[test[1]] = test[0]
+
     master_out = []
 
     for obj in self.scan_objs:
@@ -164,6 +172,8 @@ class BusinessUnit:
               nmap_obj = scanned_hosts.get_service(port[0], "tcp")
               if nmap_obj.state == "open" or nmap_obj.state == "open|filtered":
                 out = [scanned_hosts.address, nmap_obj.service, nmap_obj.state, str(nmap_obj.port)]
+                if len(buisness_path) > 0:
+                  out.append(master_dict.get(scanned_hosts.address), "")
                 master_out.append(",".join(out))
                 self.stats[nmap_obj.state] = self.stats[nmap_obj.state] + 1
               else:
@@ -172,8 +182,9 @@ class BusinessUnit:
     return master_out
 
 
-  def Collect(self):
-    out = self.ParseOutput()
+  def Collect(self, buisness_path=""):
+    isinstance(buisness_path, str)
+    out = self.ParseOutput(buisness_path)
     self.outfile = self.nmap_dir + "output-" + self.business_unit + ".csv";
     with open(self.outfile, 'w') as f:
       for line in out:

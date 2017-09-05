@@ -75,7 +75,7 @@ business_unit.ReadBase()
 business_unit.Scan()
 
 
-business_unit.Collect()
+business_unit.Collect("/Users/danielthurau/Downloads/external.csv")
 
 
 #links = []
