@@ -81,8 +81,8 @@ class ScanObject:
     else:
       key = self.start_ip + "/" + self.subnet
 
-    self.command = "nmap -P0 -sT -p " + total_ports + " -oN " + self.outfile \
-      + " " + exclude +" " + key + " > /dev/null 2>&1"
+    self.command = "nmap -P0 -sT -p " + total_ports + " -oX " + self.outfile \
+      + " " + exclude + " " + key + " > /dev/null 2>&1"
 
 
 

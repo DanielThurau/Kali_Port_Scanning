@@ -4,7 +4,11 @@ import Log
 import ScanObject
 import Upload
 
+
+
 # Standard Library Modules
+# from libnmap.parser import NmapParser
+import libnmap.parser
 import os
 
 # Business Uni 
@@ -153,38 +157,16 @@ class BusinessUnit:
     master_out = []
 
     for obj in self.scan_objs:
-      try:
-        with open(obj.outfile, 'r') as f:
-          scan_id = ""
-          for line in f:
-            # Grab title
-            if line[:16] == "Nmap scan report":
-              scan_id = line[21:].strip(' \n')
-              continue
-
-            if line[0].isnumeric():
-              # Collect stats
-              if "open|filtered" in line:
-                  self.stats["open|filtered"] = self.stats["open|filtered"] + 1
-              elif "closed|filtered" in line:
-                  self.stats["closed|filtered"] = self.stats["closed|filtered"] + 1
-              elif "filtered" in line:
-                  self.stats["filtered"] = self.stats["filtered"] + 1
-              elif "closed" in line:
-                  self.stats["closed"] = self.stats["closed"] + 1
-              elif "open" in line:
-                  self.stats["open"] = self.stats["open"] + 1
-
-              # Parse individual line
-              explode = line.split(' ')
-              final = scan_id + ","
-              for i in explode:
-                if len(i) > 0:
-                  final = final + i.strip(' \n\t\r') + ","
-              master_out.append(final.strip(' \t\r\n'))
-      except IOError:
-        Log.send_log("Unable to open " + obj.outfile)
-        exit(1)
+      nmap_report = libnmap.parser.NmapParser.parse_fromfile(obj.outfile)
+      for scanned_hosts in nmap_report.hosts:
+          for port in scanned_hosts.get_ports():
+              nmap_obj = scanned_hosts.get_service(port[0], "tcp")
+              if nmap_obj.state == "open" or nmap_obj.state == "open|filtered":
+                out = [scanned_hosts.address, nmap_obj.service, nmap_obj.state, str(nmap_obj.port)]
+                master_out.append(",".join(out))
+                self.stats[nmap_obj.state] = self.stats[nmap_obj.state] + 1
+              else:
+                self.stats[nmap_obj.state] = self.stats[nmap_obj.state] + 1
       Log.send_log("File " + obj.outfile + " parsed.")
     return master_out
 
