@@ -32,7 +32,8 @@ class BusinessUnit:
     # Object populates this when Reading configs
     self.machine_count = 0;
     self.exclude_string = ""
-    self.emails = self.mobile = self.links = self.scan_objs = []
+    self.emails = self.mobile = self.links = []
+    self.scan_objs = []
     self.stats = {"open":0, "open|filtered":0, "filtered":0, "closed|filtered":0, "closed":0}
 
     # immediatley populated by checkDeps()

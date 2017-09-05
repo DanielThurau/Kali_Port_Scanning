@@ -77,7 +77,7 @@ def UploadToDropbox(files, folder_dest):
   
   for i in range(0, len(returnLinks)):
       headers = {'Content-Type': 'application/json',}
-      params = (('key', GOOGLE_API))
+      params = (('key', GOOGLE_API),)
       data = '{"longUrl": "%s"}' % returnLinks[i]
 
       r = requests.post('https://www.googleapis.com/urlshortener/v1/url', headers=headers, params=params, data=data)

@@ -29,10 +29,10 @@ def SendMail(BU, server="localhost"):
         subject = BU.org + "-" + subject
 
     
-    if len(BU.mobile) > 0:
-        emailList = [BU.emails, BU.mobile]
-    else:
-        emailList = [BU.emails]
+    #if len(BU.mobile) > 0:
+    #    emailList = [BU.emails, BU.mobile]
+    #else:
+    emailList = [BU.emails]
         
     
         
@@ -53,7 +53,6 @@ def SendMail(BU, server="localhost"):
         part.add_header('Content-Disposition', 'attachment; filename="%s"'
                 % os.path.basename(htmlFile))
         msg.attach(part)
-        print("WTF IS HAPPENING")
         try:
             smtp = smtplib.SMTP(server)
             smtp.sendmail("Scanner@KaliBox.com", emailList[i], msg.as_string() )
