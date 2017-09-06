@@ -75,7 +75,7 @@ if args.businessName:
 if args.org:
     org = args.org
 
-business_unit = KPS.BusinessUnit(args.business_unit, FULL_PATH, bs, org)
+business_unit = KPS.BusinessUnit.BusinessUnit(args.business_unit, FULL_PATH, bs, org)
 
 
 # At this point the object is substantiated and all dependencies have been resolved. 
