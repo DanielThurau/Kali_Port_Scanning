@@ -59,7 +59,7 @@ def GenerateHTML(BU, links = []):
         with tag('p', style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
           text(BU.org)
         with tag('p', style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
-          text(str(BU.machine_count) + " items Scanned")
+          text(str(BU.live_host) + "/" + str(BU.machine_count) + " items Up")
         with tag('p', style="margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
           text(local.format('YYYY-MM-DD HH:mm:ss'))
         with tag('p', style="text-decoration: underline; margin-left: 5px; margin-top: 0px; margin-bottom: 0px;"):
@@ -81,7 +81,7 @@ def GenerateHTML(BU, links = []):
                     with tag('p', style="margin-left: 40px; padding:0px; margin-top: 0px; margin-bottom: 0px;"):
                         text(str(link))
       with tag('div', id="second", style="overflow: hidden;"):
-        with tag('input', type="text", id="myInput5", onkeyup="myFunction(5, 'myInput4')", placeholder="*", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
+        with tag('input', type="text", id="myInput5", onkeyup="myFunction(5, 'myInput4')", placeholder="*", title="Type in a name", style="width:35px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
         with tag('input', type="text", id="myInput", onkeyup="myFunction(0, 'myInput')", placeholder="Search for IP..", title="Type in a name", style="width:100px; margin-left: 0px; margin-right: 0px; padding: 0px;"):
           pass
@@ -98,7 +98,7 @@ def GenerateHTML(BU, links = []):
 
         with tag('table', border="1|0", id="myTable"):
           with tag('tr', klass="header"):
-            with tag('th', style="width:100px;"):
+            with tag('th', style="width:35px;"):
               text('New')
             with tag('th', style="width:100px;"):
               text('IP')
