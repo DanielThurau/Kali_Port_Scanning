@@ -1,9 +1,18 @@
 # User Defined Modules
-import HTMLGenerator
-import Log
-import ScanObject
-import Upload
+from . import HTMLGenerator
 
+from . import Log
+
+from . import ScanObject
+
+from . import Upload
+print("Dude ftw")
+
+
+
+# __all__ = [
+#     'BusinessUnit'
+# ]
 
 
 # Standard Library Modules
@@ -48,7 +57,7 @@ class BusinessUnit:
       Log.send_log("CheckDeps called on " + self.business_unit + " object but does not contain a self.path defined variable. ")
       exit(0)
 
-    self.config_dir = self.path + "config/"
+    self.config_dir = self.path + "../config/"
     self.CheckExist(self.config_dir)
 
     self.ports_file = self.config_dir + "ports_bad_" + self.business_unit
@@ -58,7 +67,7 @@ class BusinessUnit:
     self.CheckExist(self.ip_file)
 
     # output directory
-    self.nmap_dir = self.path + "nmap-" + self.business_unit + "/"
+    self.nmap_dir = self.path + "../nmap-" + self.business_unit + "/"
     if not os.path.exists(self.nmap_dir):
       Log.send_log(self.nmap_dir + " does not exist... creating now")
       os.system("mkdir " + self.nmap_dir)

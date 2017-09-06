@@ -1,4 +1,4 @@
-import Log
+from . import Log
 
 import arrow
 from yattag import Doc

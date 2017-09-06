@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# doctut documentation build configuration file, created by
+# KPS documentation build configuration file, created by
 # sphinx-quickstart on Wed Sep  6 14:34:10 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'doctut'
+project = 'KPS'
 copyright = '2017, Daniel Thurau'
 author = 'Daniel Thurau'
 
@@ -115,7 +115,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'doctutdoc'
+htmlhelp_basename = 'KPSdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -142,7 +142,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'doctut.tex', 'doctut Documentation',
+    (master_doc, 'KPS.tex', 'KPS Documentation',
      'Daniel Thurau', 'manual'),
 ]
 
@@ -152,7 +152,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'doctut', 'doctut Documentation',
+    (master_doc, 'KPS', 'KPS Documentation',
      [author], 1)
 ]
 
@@ -163,8 +163,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'doctut', 'doctut Documentation',
-     author, 'doctut', 'One line description of project.',
+    (master_doc, 'KPS', 'KPS Documentation',
+     author, 'KPS', 'One line description of project.',
      'Miscellaneous'),
 ]
 

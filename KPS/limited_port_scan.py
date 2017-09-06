@@ -34,31 +34,21 @@
 #        Refer to the manual for expanded explanation and for config folder setup.
 # 
 
-
-
-import KPS.BusinessUnit
-print("made it here -1")
-import KPS.Emailing
-
-from KPS.Log import *
+from BusinessUnit import *
+from Emailing import *
+from Log import *
 
 import argparse
 import os
 import sys
-
-print("made it here 0")
 
 FULL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
 LOG_FILE = FULL_PATH + ".log"
 UNIX_LIKE = True
 BUSINESS_PATH="/scanning/Kali_Port_Scanning/external.csv"
 
-print("made it here 1")
-
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
-
-print("made it here 2")
 
 parser = argparse.ArgumentParser(description='Lets scan some ports')
 
@@ -75,7 +65,7 @@ if args.businessName:
 if args.org:
     org = args.org
 
-business_unit = KPS.BusinessUnit(args.business_unit, FULL_PATH, bs, org)
+business_unit = BusinessUnit(args.business_unit, FULL_PATH, bs, org)
 
 
 # At this point the object is substantiated and all dependencies have been resolved. 
@@ -90,7 +80,7 @@ business_unit.Collect(BUSINESS_PATH)
 
 
 if len(business_unit.emails) > 0 or len(business_unit.mobile) > 0:
-    KPS.Emailing.SendMail(business_unit)
+    SendMail(business_unit)
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__
