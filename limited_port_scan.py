@@ -45,6 +45,7 @@ import sys
 FULL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
 LOG_FILE = FULL_PATH + ".log"
 UNIX_LIKE = True
+BUSINESS_PATH="/scanning/Kali_Port_Scanning/external.csv"
 
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
@@ -75,13 +76,9 @@ business_unit.ReadBase()
 business_unit.Scan()
 
 
-business_unit.Collect("/Users/danielthurau/Downloads/external.csv")
+business_unit.Collect(BUSINESS_PATH)
 
 
-#links = []
-#links = uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
-#uploadToDropbox([business_unit.outfile], '/' + os.path.basename(os.path.normpath(business_unit.nmap_dir)) + '/' )
-#print(links)
 if len(business_unit.emails) > 0 or len(business_unit.mobile) > 0:
     SendMail(business_unit)
 
