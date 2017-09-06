@@ -31,6 +31,7 @@ class BusinessUnit:
 
     # Object populates this when Reading configs
     self.machine_count = 0;
+    self.live_host = 0
     self.exclude_string = ""
     self.emails = self.mobile = self.links = []
     self.scan_objs = []
@@ -157,7 +158,6 @@ class BusinessUnit:
     """Parse and assemble human readable csv report of all nmap results"""
     if len(buisness_path) > 0:
       master_dict = {}
-      try:
       with open(buisness_path, "r") as f:
         for line in f:
           test = line.strip(' \n\t\r')
@@ -181,6 +181,8 @@ class BusinessUnit:
     for obj in self.scan_objs:
       nmap_report = libnmap.parser.NmapParser.parse_fromfile(obj.outfile)
       for scanned_hosts in nmap_report.hosts:
+          if scanned_hosts.is_up():
+              self.live_host = self.live_host + 1
           for port in scanned_hosts.get_ports():
               nmap_obj = scanned_hosts.get_service(port[0], "tcp")
               if nmap_obj.state == "open" or nmap_obj.state == "open|filtered":
@@ -189,19 +191,18 @@ class BusinessUnit:
 
                 # append business type
                 if len(buisness_path) > 0:
-                  out.append(master_dict.get(scanned_hosts.address, "") + ",")
+                  out.append(master_dict.get(scanned_hosts.address, "") + "")
                 else:
-                  out.append(",")
+                  out.append("")
                 
                 # append new or not
                 if len(last) > 0:
                   if len([s for s in last if ",".join(out) in s]) == 0:
-                    out.append("*,")
+                    out.append("*")
                   else:
-                    out.append(",")
+                    out.append("")
                 else:
-                  out.append("*,")
-
+                  out.append("*")
 
                 master_out.append(",".join(out))
 
