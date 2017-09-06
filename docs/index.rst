@@ -16,10 +16,11 @@ Current modules
 - Upload: Allows uploading of reports to DropBox
 
 
-libnmap's modules
------------------
+Kali_Port_Scanning's modules
+----------------------------
 
 The full `source code <https://github.com/msadekuni/Kali_Port_Scanning>`_ is available on GitHub.
+
 The different modules are documented below:
 
 .. toctree::
