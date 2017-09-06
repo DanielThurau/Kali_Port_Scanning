@@ -1,3 +1,4 @@
+docs/build/*
 config/*
 !config/ports_bad_template.template
 !config/ports_baseline_template.conf.template
