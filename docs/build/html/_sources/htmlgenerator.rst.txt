@@ -1,4 +1,0 @@
-HTMLGenerator Doc
-=================
-
-blah

@@ -1,4 +1,0 @@
-Log Docs
-========
-
-blah
