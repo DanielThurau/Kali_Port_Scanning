@@ -21,7 +21,8 @@ blah
 BusinessUnit methods
 --------------------
 
-.. autoclass:: KPS.BusinessUnit
+.. automodule:: KPS.BusinessUnit
 .. autoclass:: BusinessUnit
     :members:
 
+    .. automethod:: __init__
