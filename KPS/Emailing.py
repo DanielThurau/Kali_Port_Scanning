@@ -7,12 +7,14 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import os
 
-# Timestamp init
-utc = arrow.utcnow()
-local = utc.to('US/Pacific')
+
 
 def SendMail(BU, server="localhost"):
     """Send formatted email using information from a BuisnessUnit Object"""
+
+    # Timestamp init
+    utc = arrow.utcnow()
+    local = utc.to('US/Pacific')
 
     htmlFile = BU.nmap_dir + "out.html" 
 

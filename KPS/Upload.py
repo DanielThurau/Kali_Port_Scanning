@@ -5,28 +5,31 @@ import dropbox
 import os
 import requests
 
-# Timestamp init
-utc = arrow.utcnow()
-local = utc.to('US/Pacific')
-try: 
-  DROP_BOX_API = os.environ['dropbox_key']
-except:
-  Log.send_log("ENV Var dropbox_key DNE")
-  exit(1)
 
-try:
-  GOOGLE_API = os.environ['google_key']
-except:
-  Log.send_log("ENV Var google_key DNE")
-  exit(1)
-
-
-# Dropbox module init
-dbx = dropbox.Dropbox(DROP_BOX_API)
-dbx.users_get_current_account()
 
 
 def UploadToDropbox(files, folder_dest):
+  # Timestamp init
+  utc = arrow.utcnow()
+  local = utc.to('US/Pacific')
+  try: 
+    DROP_BOX_API = os.environ['dropbox_key']
+  except:
+    Log.send_log("ENV Var dropbox_key DNE")
+    exit(1)
+
+  try:
+    GOOGLE_API = os.environ['google_key']
+  except:
+    Log.send_log("ENV Var google_key DNE")
+    exit(1)
+
+
+  # Dropbox module init
+  dbx = dropbox.Dropbox(DROP_BOX_API)
+  dbx.users_get_current_account()
+
+  
   isinstance(files, list)
   isinstance(folder_dest, str)
 
@@ -44,7 +47,7 @@ def UploadToDropbox(files, folder_dest):
       with open(file, "rb") as f:
         dbx.files_upload(f.read(), full_db_path, mute = True)
 
-        result = GetShareableLink(full_db_path)
+        result = GetShareableLink(full_db_path, DROP_BOX_API)
         
         if result.status_code == 200:
             returnLinks.append(result.json()['url'])
@@ -88,9 +91,9 @@ def UploadToDropbox(files, folder_dest):
   return returnLinks 
 
 
-def GetShareableLink(path):
+def GetShareableLink(path, DB_API):
     isinstance(path, str)
-    auth ='Bearer ' + DROP_BOX_API
+    auth ='Bearer ' + DB_API
     headers = {
         'Authorization': auth, 
         'Content-Type': 'application/json',

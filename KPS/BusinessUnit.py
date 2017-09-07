@@ -6,7 +6,7 @@ from . import Log
 from . import ScanObject
 
 from . import Upload
-print("Dude ftw")
+
 
 
 

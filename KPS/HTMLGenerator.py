@@ -6,11 +6,14 @@ from yattag import indent
 import fileinput
 
 
-utc = arrow.utcnow()
-local = utc.to('US/Pacific')
+
 
 
 def GenerateHTML(BU, links = []):
+  utc = arrow.utcnow()
+  local = utc.to('US/Pacific')
+
+
   Log.send_log("Generating HTML output for " + BU.business_unit)
 
 
