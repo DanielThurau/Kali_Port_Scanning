@@ -1,8 +1,8 @@
-from portscan import BusinessUnit
+from portscan import businessunit
 
-from portscan import Emailing
+from portscan import email
 
-from portscan import Log
+from portscan import log
 
 import argparse
 import os
@@ -27,8 +27,7 @@ if args.businessName:
 if args.org:
     org = args.org
 
-business_unit = BusinessUnit.BusinessUnit(args.business_unit, FULL_PATH, bs, org)
-
+business_unit = businessunit.BusinessUnit(args.business_unit, FULL_PATH, bs, org)
 # At this point the object is substantiated and all dependencies have been resolved. 
 
 business_unit.ReadPorts()
@@ -41,7 +40,7 @@ business_unit.Collect(BUSINESS_PATH)
 
 
 if len(business_unit.emails) > 0 or len(business_unit.mobile) > 0:
-    Emailing.SendMail(business_unit)
+    email.SendMail(business_unit)
 
 # Flush stdout if fork has failed
 sys.stdout = sys.__stdout__
