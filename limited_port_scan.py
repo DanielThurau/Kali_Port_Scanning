@@ -1,16 +1,13 @@
 from portscan import businessunit
-
 from portscan import email
 
-from portscan import log
 
 import argparse
 import os
-import sys
 
 FULL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
 UNIX_LIKE = True
-BUSINESS_PATH="/scanning/Kali_Port_Scanning/external.csv"
+BUSINESS_PATH = "/scanning/Kali_Port_Scanning/external.csv"
 
 parser = argparse.ArgumentParser(description='Lets scan some ports')
 
@@ -41,7 +38,3 @@ business_unit.Collect(BUSINESS_PATH)
 
 if len(business_unit.emails) > 0 or len(business_unit.mobile) > 0:
     email.SendMail(business_unit)
-
-# Flush stdout if fork has failed
-sys.stdout = sys.__stdout__
-sys.stdout.flush()
